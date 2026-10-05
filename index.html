@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>ELU.EXE</title>
 
 <style>
@@ -13,29 +14,34 @@
     }
 
     :root {
-        --green: #39c978;
-        --green-light: #78e6a5;
-        --green-soft: #b9f5d0;
-        --green-pale: #e8fff1;
-        --green-dark: #218653;
+        --green: #39ff88;
+        --green-dark: #0f8f4f;
+        --green-soft: #7dffb2;
+        --green-dim: #1f8c52;
+        --black: #050805;
+        --panel: #09110b;
+        --panel-light: #0d180f;
+        --border: #1c6b3e;
+        --text: #c7ffd9;
+        --muted: #6ba982;
+        --danger: #ff5555;
+    }
 
-        --background: #f4faf6;
-        --white: #ffffff;
-        --text: #24352b;
-        --muted: #718077;
-        --border: #d9e9df;
-        --shadow: 0 12px 35px rgba(39, 100, 63, 0.10);
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        background: var(--black);
+        color: var(--text);
+        font-family: "Courier New", monospace;
     }
 
     body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: var(--background);
-        color: var(--text);
-        min-height: 100vh;
         overflow-x: hidden;
     }
 
-    button {
+    button,
+    input {
         font-family: inherit;
     }
 
@@ -46,311 +52,214 @@
     #bootScreen {
         position: fixed;
         inset: 0;
-        background: var(--green-pale);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        background: #020402;
         z-index: 9999;
-        transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-
-    #bootScreen.hidden {
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    .boot-card {
-        width: min(90%, 460px);
-        background: var(--white);
-        border: 1px solid var(--border);
-        border-radius: 24px;
-        padding: 42px 34px;
-        text-align: center;
-        box-shadow: var(--shadow);
-    }
-
-    .boot-logo {
-        width: 72px;
-        height: 72px;
-        margin: 0 auto 22px;
-        border-radius: 22px;
-        background: var(--green);
-        color: white;
         display: flex;
-        align-items: center;
         justify-content: center;
-        font-size: 25px;
-        font-weight: 700;
-        box-shadow: 0 10px 25px rgba(57, 201, 120, 0.25);
+        align-items: center;
+        padding: 20px;
     }
 
-    .boot-card h1 {
-        font-size: 30px;
-        margin-bottom: 8px;
-    }
-
-    .boot-card p {
-        color: var(--muted);
-        margin-bottom: 28px;
-    }
-
-    .progress-container {
+    .boot-container {
         width: 100%;
-        height: 7px;
-        background: #e7f1ea;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 25px;
+        max-width: 700px;
     }
 
-    .progress {
-        width: 0;
+    .boot-title {
+        color: var(--green);
+        font-size: clamp(32px, 10vw, 72px);
+        font-weight: bold;
+        text-align: center;
+        text-shadow: 0 0 15px rgba(57, 255, 136, 0.5);
+        margin-bottom: 10px;
+        letter-spacing: 4px;
+    }
+
+    .boot-subtitle {
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 40px;
+        font-size: 13px;
+    }
+
+    #bootText {
+        min-height: 180px;
+        font-size: 13px;
+        line-height: 1.8;
+        color: var(--green-soft);
+    }
+
+    .boot-line {
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+    }
+
+    .progress-wrapper {
+        width: 100%;
+        height: 12px;
+        border: 1px solid var(--border);
+        margin-top: 20px;
+        padding: 2px;
+    }
+
+    .progress-bar {
         height: 100%;
+        width: 0%;
         background: var(--green);
-        border-radius: 10px;
-        transition: width 0.15s linear;
+        box-shadow: 0 0 10px rgba(57, 255, 136, 0.5);
+        transition: width 0.2s;
     }
 
-    .boot-button {
-        border: none;
-        background: var(--green);
-        color: white;
-        padding: 13px 26px;
-        border-radius: 13px;
-        font-size: 15px;
-        font-weight: 600;
+    #enterButton {
+        display: none;
+        width: 100%;
+        margin-top: 30px;
+        padding: 15px;
+        background: transparent;
+        border: 1px solid var(--green);
+        color: var(--green);
         cursor: pointer;
-        transition: 0.2s ease;
+        font-size: 15px;
+        transition: 0.2s;
     }
 
-    .boot-button:hover {
-        background: var(--green-dark);
-        transform: translateY(-2px);
+    #enterButton:hover,
+    #enterButton:active {
+        background: var(--green);
+        color: #020402;
+        box-shadow: 0 0 20px rgba(57, 255, 136, 0.35);
     }
 
     /* =========================
-       MAIN PAGE
+       MAIN SYSTEM
     ========================= */
 
-    #mainContent {
-        opacity: 0;
-        transition: opacity 0.8s ease;
+    #mainSystem {
+        display: none;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top, rgba(20, 90, 50, 0.12), transparent 40%),
+            var(--black);
     }
 
-    #mainContent.visible {
-        opacity: 1;
-    }
-
-    .top-bar {
-        width: 100%;
-        padding: 18px 6%;
-        background: rgba(255,255,255,0.88);
-        backdrop-filter: blur(15px);
+    .topbar {
         border-bottom: 1px solid var(--border);
+        padding: 16px 20px;
         display: flex;
-        align-items: center;
         justify-content: space-between;
+        align-items: center;
+        gap: 15px;
         position: sticky;
         top: 0;
-        z-index: 50;
+        z-index: 100;
+        background: rgba(5, 8, 5, 0.95);
+        backdrop-filter: blur(8px);
     }
 
-    .brand {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: -0.5px;
+    .system-name {
+        color: var(--green);
+        font-weight: bold;
+        letter-spacing: 2px;
+        font-size: 15px;
     }
 
-    .status {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .system-status {
         color: var(--muted);
-        font-size: 13px;
+        font-size: 11px;
     }
 
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        background: var(--green);
-        border-radius: 50%;
-        box-shadow: 0 0 8px rgba(57, 201, 120, 0.5);
-    }
-
-    .container {
-        width: min(1100px, 90%);
-        margin: auto;
-        padding: 70px 0 90px;
-    }
-
-    /* =========================
-       HERO
-    ========================= */
-
-    .hero {
-        text-align: center;
-        max-width: 760px;
-        margin: 0 auto 60px;
-    }
-
-    .hero-tag {
-        display: inline-block;
-        background: var(--green-pale);
-        color: var(--green-dark);
-        padding: 8px 15px;
-        border-radius: 100px;
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    .hero h2 {
-        font-size: clamp(38px, 7vw, 62px);
-        line-height: 1.05;
-        letter-spacing: -2px;
-        margin-bottom: 22px;
-    }
-
-    .hero h2 span {
+    .system-status span {
         color: var(--green);
     }
 
-    .hero p {
-        max-width: 650px;
-        margin: auto;
+    .welcome {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 45px 20px 20px;
+    }
+
+    .welcome h1 {
+        color: var(--green);
+        font-size: clamp(26px, 7vw, 42px);
+        margin-bottom: 12px;
+    }
+
+    .welcome p {
+        max-width: 700px;
         color: var(--muted);
         line-height: 1.8;
-        font-size: 16px;
+        font-size: 13px;
     }
 
     /* =========================
        APP GRID
     ========================= */
 
-    .app-grid {
+    .apps {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 25px 20px 50px;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
     }
 
-    .app-card {
-        position: relative;
-        background: var(--white);
+    .app {
+        min-height: 130px;
         border: 1px solid var(--border);
-        border-radius: 22px;
-        padding: 28px;
-        min-height: 190px;
+        background: linear-gradient(
+            145deg,
+            rgba(13, 24, 15, 0.95),
+            rgba(6, 12, 7, 0.95)
+        );
+        padding: 18px;
         cursor: pointer;
-        box-shadow: 0 5px 18px rgba(39, 100, 63, 0.04);
-        transition: transform 0.25s ease, box-shadow 0.25s ease,
-                    border-color 0.25s ease;
+        position: relative;
         overflow: hidden;
+        transition: 0.2s;
     }
 
-    .app-card::after {
+    .app::before {
         content: "";
         position: absolute;
-        width: 90px;
-        height: 90px;
-        background: var(--green-pale);
-        border-radius: 50%;
-        right: -35px;
-        bottom: -35px;
-        transition: transform 0.3s ease;
-    }
-
-    .app-card:hover {
-        transform: translateY(-5px);
-        border-color: #b9dfc7;
-        box-shadow: var(--shadow);
-    }
-
-    .app-card:hover::after {
-        transform: scale(1.4);
-    }
-
-    .app-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 15px;
-        background: var(--green-pale);
-        color: var(--green-dark);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 22px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .app-card h3 {
-        font-size: 19px;
-        margin-bottom: 8px;
-        position: relative;
-        z-index: 1;
-    }
-
-    .app-card p {
-        color: var(--muted);
-        line-height: 1.6;
-        font-size: 14px;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* =========================
-       LOCKED SECRET FILE
-    ========================= */
-
-    .app-card.locked {
-        cursor: not-allowed;
-    }
-
-    .app-card.locked:hover {
-        transform: translateY(-2px);
-    }
-
-    .lock-overlay {
-        position: absolute;
         inset: 0;
-        background: rgba(255,255,255,0.72);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 5;
-        opacity: 1;
-        transition: opacity 0.4s ease;
+        background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(57, 255, 136, 0.06),
+            transparent
+        );
+        transform: translateX(-100%);
+        transition: 0.4s;
     }
 
-    .lock-content {
-        text-align: center;
+    .app:hover::before {
+        transform: translateX(100%);
+    }
+
+    .app:hover,
+    .app:active {
+        border-color: var(--green);
+        transform: translateY(-2px);
+        box-shadow: 0 0 18px rgba(57, 255, 136, 0.12);
+    }
+
+    .app-number {
         color: var(--muted);
+        font-size: 10px;
+        margin-bottom: 15px;
     }
 
-    .lock-symbol {
-        width: 46px;
-        height: 46px;
-        border-radius: 14px;
-        background: var(--green-pale);
-        color: var(--green-dark);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 9px;
-        font-size: 19px;
+    .app h3 {
+        color: var(--green);
+        font-size: 15px;
+        margin-bottom: 8px;
     }
 
-    .lock-content span {
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .app-card.unlocked .lock-overlay {
-        opacity: 0;
-        pointer-events: none;
+    .app p {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
     }
 
     /* =========================
@@ -360,197 +269,218 @@
     .modal {
         position: fixed;
         inset: 0;
-        background: rgba(25, 45, 32, 0.35);
-        backdrop-filter: blur(8px);
-        display: flex;
-        align-items: center;
+        background: rgba(0, 0, 0, 0.82);
+        z-index: 500;
+        display: none;
         justify-content: center;
-        padding: 20px;
-        z-index: 100;
-        opacity: 0;
-        visibility: hidden;
-        transition: 0.3s ease;
+        align-items: center;
+        padding: 15px;
     }
 
     .modal.active {
-        opacity: 1;
-        visibility: visible;
+        display: flex;
     }
 
-    .modal-content {
-        width: min(720px, 100%);
-        max-height: 88vh;
+    .window {
+        width: 100%;
+        max-width: 800px;
+        max-height: 90vh;
         overflow-y: auto;
-        background: var(--white);
-        border-radius: 25px;
-        padding: 35px;
-        box-shadow: 0 25px 70px rgba(25, 60, 40, 0.2);
-        transform: translateY(20px);
-        transition: transform 0.3s ease;
-        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--green);
+        box-shadow: 0 0 30px rgba(57, 255, 136, 0.15);
+        animation: windowOpen 0.2s ease-out;
     }
 
-    .modal.active .modal-content {
-        transform: translateY(0);
+    .window-header {
+        position: sticky;
+        top: 0;
+        background: #071008;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 5;
     }
 
-    .close-button {
-        position: absolute;
-        right: 20px;
-        top: 20px;
-        width: 36px;
-        height: 36px;
-        border: none;
-        background: #f1f6f2;
-        border-radius: 50%;
-        color: var(--muted);
-        font-size: 18px;
+    .window-title {
+        color: var(--green);
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .close {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--green);
+        width: 30px;
+        height: 30px;
         cursor: pointer;
     }
 
-    .modal-title {
-        font-size: 28px;
-        margin-bottom: 8px;
-        padding-right: 40px;
+    .close:hover {
+        background: var(--green);
+        color: #000;
     }
 
-    .modal-subtitle {
+    .window-content {
+        padding: 22px;
+        line-height: 1.8;
+        font-size: 13px;
+    }
+
+    .window-content p {
+        margin-bottom: 18px;
+    }
+
+    .terminal-line {
+        color: var(--green);
+        margin-bottom: 6px;
+    }
+
+    .muted {
         color: var(--muted);
-        margin-bottom: 30px;
     }
 
     /* =========================
        MEMORIES
     ========================= */
 
+    .memory-list {
+        display: grid;
+        gap: 12px;
+    }
+
     .memory-item {
         border: 1px solid var(--border);
-        border-radius: 16px;
-        margin-bottom: 12px;
-        overflow: hidden;
-    }
-
-    .memory-header {
-        padding: 18px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        padding: 15px;
         cursor: pointer;
-        font-weight: 600;
+        transition: 0.2s;
     }
 
-    .memory-header span {
+    .memory-item:hover {
+        border-color: var(--green);
+        background: rgba(57, 255, 136, 0.04);
+    }
+
+    .memory-item h4 {
         color: var(--green);
-        font-size: 20px;
+        margin-bottom: 5px;
     }
 
-    .memory-body {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease;
-    }
-
-    .memory-body-inner {
-        padding: 0 20px 20px;
+    .memory-item small {
         color: var(--muted);
+    }
+
+    .memory-content {
+        display: none;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed var(--border);
+        color: var(--text);
         line-height: 1.8;
-        white-space: pre-line;
+    }
+
+    .memory-item.open .memory-content {
+        display: block;
     }
 
     /* =========================
-       LETTER
+       STATISTICS
     ========================= */
 
-    .letter {
-        background: var(--green-pale);
-        border-radius: 20px;
-        padding: 30px;
+    .stat {
+        margin-bottom: 23px;
+    }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 7px;
+        font-size: 12px;
+    }
+
+    .stat-name {
         color: var(--text);
-        line-height: 1.9;
-        white-space: pre-line;
+    }
+
+    .stat-value {
+        color: var(--green);
+    }
+
+    .meter {
+        width: 100%;
+        height: 10px;
+        border: 1px solid var(--border);
+        padding: 1px;
+    }
+
+    .meter-fill {
+        height: 100%;
+        background: var(--green);
+        box-shadow: 0 0 8px rgba(57, 255, 136, 0.35);
     }
 
     /* =========================
        FUTURE
     ========================= */
 
-    .future-list {
-        list-style: none;
-        margin: 25px 0;
+    .future-terminal {
+        line-height: 2;
     }
 
-    .future-list li {
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border);
-        color: var(--text);
-    }
-
-    .future-list li::before {
-        content: "✓";
+    .future-terminal .check {
         color: var(--green);
-        font-weight: 700;
-        margin-right: 12px;
     }
 
-    .future-number {
+    .infinity {
+        font-size: 45px;
+        color: var(--green);
         text-align: center;
-        font-size: 42px;
-        color: var(--green);
-        font-weight: 700;
-        margin-top: 25px;
+        margin-top: 15px;
+        text-shadow: 0 0 15px rgba(57, 255, 136, 0.35);
     }
 
     /* =========================
        SECRET FILE
     ========================= */
 
-    .secret-content {
+    .secret-box {
+        border: 1px dashed var(--green);
+        padding: 25px;
         text-align: center;
-        padding: 35px 10px;
     }
 
-    .secret-symbol {
-        width: 70px;
-        height: 70px;
-        border-radius: 22px;
-        background: var(--green-pale);
+    .secret-box h2 {
         color: var(--green);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 25px;
-        font-size: 28px;
-    }
-
-    .secret-content p {
-        color: var(--muted);
-        line-height: 1.8;
-        white-space: pre-line;
+        margin-bottom: 20px;
     }
 
     /* =========================
-       QUIZ
+       LOVE LETTER
     ========================= */
 
-    .quiz-progress {
-        height: 6px;
-        background: #e8f1eb;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 30px;
+    .letter {
+        line-height: 2;
+        white-space: pre-line;
     }
 
-    .quiz-progress-bar {
-        width: 20%;
-        height: 100%;
-        background: var(--green);
-        transition: width 0.3s ease;
+    .letter .signature {
+        color: var(--green);
+        margin-top: 25px;
     }
+
+    /* =========================
+       BIRTHDAY QUIZ
+    ========================= */
 
     .quiz-question {
-        font-size: 21px;
-        line-height: 1.5;
-        margin-bottom: 20px;
+        color: var(--green);
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 25px;
     }
 
     .quiz-options {
@@ -559,20 +489,42 @@
     }
 
     .quiz-option {
-        width: 100%;
-        text-align: left;
+        background: transparent;
         border: 1px solid var(--border);
-        background: white;
-        padding: 15px 17px;
-        border-radius: 13px;
-        cursor: pointer;
-        transition: 0.2s ease;
         color: var(--text);
+        padding: 14px;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 12px;
     }
 
     .quiz-option:hover {
         border-color: var(--green);
-        background: var(--green-pale);
+        color: var(--green);
+    }
+
+    .quiz-option.correct {
+        border-color: var(--green);
+        background: rgba(57, 255, 136, 0.08);
+        color: var(--green);
+    }
+
+    .quiz-option.wrong {
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    .quiz-feedback {
+        min-height: 30px;
+        margin-top: 18px;
+        color: var(--green);
+    }
+
+    .quiz-progress {
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 20px;
     }
 
     .quiz-result {
@@ -580,105 +532,116 @@
         padding: 20px 0;
     }
 
-    .quiz-result h3 {
-        font-size: 28px;
-        margin-bottom: 18px;
-        color: var(--green-dark);
+    .quiz-result h2 {
+        color: var(--green);
+        margin-bottom: 20px;
     }
 
-    .quiz-result p {
-        color: var(--muted);
-        line-height: 1.8;
-        white-space: pre-line;
+    .quiz-result .big {
+        font-size: 35px;
+        color: var(--green);
+        margin: 20px 0;
     }
 
     /* =========================
        LOVE.EXE
     ========================= */
 
-    .love-terminal {
-        background: #f3faf5;
-        border-radius: 18px;
-        padding: 25px;
-        font-family: monospace;
+    .love-error {
+        color: var(--danger);
         line-height: 2;
-        color: var(--text);
-        white-space: pre-line;
     }
 
-    .love-terminal .error {
-        color: #e05252;
-        font-weight: 700;
-    }
-
-    .love-terminal .highlight {
-        color: var(--green-dark);
-        font-weight: 700;
+    .love-error .green {
+        color: var(--green);
     }
 
     /* =========================
        FOOTER
     ========================= */
 
-    footer {
+    .footer {
+        border-top: 1px solid var(--border);
         text-align: center;
+        padding: 25px 20px;
         color: var(--muted);
-        font-size: 13px;
-        padding-top: 55px;
+        font-size: 10px;
     }
 
     /* =========================
-       RESPONSIVE
+       ANIMATIONS
     ========================= */
 
-    @media (max-width: 760px) {
-        .container {
-            padding-top: 45px;
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes windowOpen {
+        from {
+            opacity: 0;
+            transform: scale(0.97);
         }
 
-        .app-grid {
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 800px) {
+        .apps {
             grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-        }
-
-        .app-card {
-            min-height: 175px;
-            padding: 22px;
-        }
-
-        .hero {
-            margin-bottom: 40px;
-        }
-
-        .hero h2 {
-            letter-spacing: -1.5px;
-        }
-
-        .modal-content {
-            padding: 28px 22px;
-            border-radius: 21px;
         }
     }
 
     @media (max-width: 500px) {
-        .app-grid {
-            grid-template-columns: 1fr;
+        .topbar {
+            padding: 13px 15px;
         }
 
-        .app-card {
-            min-height: 155px;
+        .system-name {
+            font-size: 12px;
         }
 
-        .top-bar {
-            padding: 16px 5%;
+        .system-status {
+            font-size: 9px;
         }
 
-        .container {
-            width: 91%;
+        .welcome {
+            padding: 35px 15px 10px;
         }
 
-        .boot-card {
-            padding: 35px 25px;
+        .apps {
+            padding: 20px 15px 40px;
+            gap: 10px;
+        }
+
+        .app {
+            min-height: 120px;
+            padding: 14px;
+        }
+
+        .app h3 {
+            font-size: 13px;
+        }
+
+        .app p {
+            font-size: 10px;
+        }
+
+        .window-content {
+            padding: 18px;
+            font-size: 12px;
+        }
+
+        .boot-container {
+            padding: 5px;
         }
     }
 </style>
@@ -691,177 +654,181 @@
 ========================= -->
 
 <div id="bootScreen">
-    <div class="boot-card">
-        <div class="boot-logo">E</div>
 
-        <h1>ELU.EXE</h1>
-        <p>A little something made just for you.</p>
+    <div class="boot-container">
 
-        <div class="progress-container">
-            <div class="progress" id="progress"></div>
+        <div class="boot-title">ELU.EXE</div>
+
+        <div class="boot-subtitle">
+            PERSONAL MEMORY SYSTEM
         </div>
 
-        <button class="boot-button" id="enterButton">
-            Enter
+        <div id="bootText"></div>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <button id="enterButton">
+            ENTER ELU.EXE
         </button>
+
     </div>
+
 </div>
 
 
 <!-- =========================
-     MAIN CONTENT
+     MAIN SYSTEM
 ========================= -->
 
-<div id="mainContent">
+<div id="mainSystem">
 
-    <div class="top-bar">
-        <div class="brand">ELU.EXE</div>
+    <div class="topbar">
 
-        <div class="status">
-            <span class="status-dot"></span>
-            Running
+        <div class="system-name">
+            ELU.EXE
         </div>
+
+        <div class="system-status">
+            SYSTEM STATUS:
+            <span>RUNNING</span>
+        </div>
+
     </div>
 
 
-    <main class="container">
+    <section class="welcome">
 
-        <!-- HERO -->
+        <h1>Welcome back, sayang.</h1>
 
-        <section class="hero">
+        <p>
+            You've entered something built entirely for you.
+            There isn't much useful software here.
+            Just a collection of memories, little moments,
+            things I love about you, and a future I hope we
+            get to keep writing together.
+        </p>
 
-            <div class="hero-tag">
-                Personal Memory System
+    </section>
+
+
+    <!-- =========================
+         APPLICATIONS
+    ========================== -->
+
+    <section class="apps">
+
+        <div class="app" onclick="openModal('memoriesModal')">
+
+            <div class="app-number">
+                APP 01
             </div>
 
-            <h2>
-                Welcome back, <span>sayang.</span>
-            </h2>
+            <h3>MEMORIES</h3>
 
             <p>
-                You've entered something built entirely for you.
-                There isn't much useful software here.
-                Just a collection of memories, little moments,
-                things I love about you, and a future I hope we
-                get to keep writing together.
+                A collection of moments worth remembering.
             </p>
 
-        </section>
+        </div>
 
 
-        <!-- APP GRID -->
+        <div class="app" onclick="openModal('statsModal')">
 
-        <section class="app-grid">
-
-            <!-- MEMORIES -->
-
-            <div class="app-card" onclick="openModal('memoriesModal')">
-
-                <div class="app-icon">M</div>
-
-                <h3>Memories</h3>
-
-                <p>
-                    A collection of moments,
-                    stories and memories that belong to us.
-                </p>
-
+            <div class="app-number">
+                APP 02
             </div>
 
+            <h3>STATISTICS</h3>
 
-            <!-- BIRTHDAY -->
+            <p>
+                Relationship statistics and system analysis.
+            </p>
 
-            <div class="app-card" onclick="openModal('birthdayModal')">
+        </div>
 
-                <div class="app-icon">B</div>
 
-                <h3>Birthday.exe</h3>
+        <div class="app" onclick="openModal('futureModal')">
 
-                <p>
-                    A little test to see how well
-                    you remember us.
-                </p>
-
+            <div class="app-number">
+                APP 03
             </div>
 
+            <h3>FUTURE.EXE</h3>
 
-            <!-- LOVE LETTER -->
+            <p>
+                Access possible future memories.
+            </p>
 
-            <div class="app-card" onclick="openModal('letterModal')">
+        </div>
 
-                <div class="app-icon">L</div>
 
-                <h3>Love Letter</h3>
+        <div class="app" onclick="openModal('secretModal')">
 
-                <p>
-                    Some things are easier to say
-                    when they're written down.
-                </p>
-
+            <div class="app-number">
+                APP 04
             </div>
 
+            <h3>SECRET FILE</h3>
 
-            <!-- SECRET FILE -->
+            <p>
+                Unauthorized access may reveal something important.
+            </p>
 
-            <div class="app-card locked" id="secretCard">
+        </div>
 
-                <div class="app-icon">S</div>
 
-                <h3>Secret File</h3>
+        <div class="app" onclick="openModal('letterModal')">
 
-                <p>
-                    There might be something hidden here.
-                </p>
-
-                <div class="lock-overlay">
-                    <div class="lock-content">
-                        <div class="lock-symbol">×</div>
-                        <span>Locked</span>
-                    </div>
-                </div>
-
+            <div class="app-number">
+                APP 05
             </div>
 
+            <h3>LOVE LETTER</h3>
 
-            <!-- FUTURE -->
+            <p>
+                A message that doesn't belong in a database.
+            </p>
 
-            <div class="app-card" onclick="openModal('futureModal')">
+        </div>
 
-                <div class="app-icon">F</div>
 
-                <h3>Future.exe</h3>
+        <div class="app" onclick="openModal('birthdayModal')">
 
-                <p>
-                    Searching possible futures
-                    for the two of us.
-                </p>
-
+            <div class="app-number">
+                APP 06
             </div>
 
+            <h3>BIRTHDAY.EXE</h3>
 
-            <!-- LOVE.EXE -->
+            <p>
+                A small test before accessing the final protocol.
+            </p>
 
-            <div class="app-card" onclick="openModal('loveModal')">
+        </div>
 
-                <div class="app-icon">∞</div>
 
-                <h3>Love.exe</h3>
+        <div class="app" onclick="openModal('loveModal')">
 
-                <p>
-                    An application that apparently
-                    cannot be terminated.
-                </p>
-
+            <div class="app-number">
+                APP 07
             </div>
 
-        </section>
+            <h3>LOVE.EXE</h3>
+
+            <p>
+                System termination utility.
+            </p>
+
+        </div>
+
+    </section>
 
 
-        <footer>
-            Made with love, for you.
-        </footer>
-
-    </main>
+    <div class="footer">
+        ELU.EXE // PERSONAL SYSTEM // VERSION 1.0
+    </div>
 
 </div>
 
@@ -872,190 +839,580 @@
 
 <div class="modal" id="memoriesModal">
 
-    <div class="modal-content">
+    <div class="window">
 
-        <button class="close-button" onclick="closeModal('memoriesModal')">
-            ×
-        </button>
+        <div class="window-header">
 
-        <h2 class="modal-title">Memory Database</h2>
-
-        <p class="modal-subtitle">
-            A few things I never want to forget.
-        </p>
-
-
-        <div class="memory-item">
-
-            <div class="memory-header" onclick="toggleMemory(this)">
-                The Beginning
-                <span>+</span>
+            <div class="window-title">
+                MEMORIES.DATABASE
             </div>
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-We started as best friends, and somehow, five years later, we're still best friends, just with something a little more between us.
-
-Those five years never really felt like a distance between us. If anything, they gave us more time to grow closer, understand each other, and create something I never expected to have.
-
-I'm really grateful that somewhere along the way, my best friend became the person I get to love too.
-                </div>
-            </div>
+            <button class="close" onclick="closeModal('memoriesModal')">
+                X
+            </button>
 
         </div>
 
 
-        <div class="memory-item">
+        <div class="window-content">
 
-            <div class="memory-header" onclick="toggleMemory(this)">
-                Our Conversations
-                <span>+</span>
-            </div>
+            <div class="memory-list">
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-We used to think our conversations were cringe.
 
-Looking back now, I think we were right.
+                <div class="memory-item">
 
-WE ARE ACTUALLY CRINGE.
+                    <h4>The Beginning</h4>
 
-And honestly, I wouldn't change it.
+                    <small>
+                        FILE 001
+                    </small>
 
-I love how we can talk about the most random things, say things that make absolutely no sense, and somehow still have the best conversations.
+                    <div class="memory-content">
 
-Our conversations might not always make sense to anyone else, but they make sense to us.
+                        We started as best friends, and somehow,
+                        five years later, we're still best friends,
+                        just with something a little more between us.
 
-And I love that.
+                        Those five years never really felt like a
+                        distance between us. If anything, they gave
+                        us more time to grow closer, understand each
+                        other, and create something I never expected
+                        to have.
+
+                        I'm really grateful that somewhere along
+                        the way, my best friend became the person
+                        I get to love too.
+
+                    </div>
+
                 </div>
+
+
+                <div class="memory-item">
+
+                    <h4>Our Conversations</h4>
+
+                    <small>
+                        FILE 002
+                    </small>
+
+                    <div class="memory-content">
+
+                        We used to think our conversations were cringe.
+
+                        Looking back now, I think we were right.
+
+                        WE ARE ACTUALLY CRINGE.
+
+                        And honestly, I wouldn't change it.
+
+                        I love how we can talk about the most random
+                        things, say things that make absolutely no
+                        sense, and somehow still have the best
+                        conversations.
+
+                        Our conversations might not always make
+                        sense to anyone else, but they make sense
+                        to us.
+
+                        And I love that.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Funny Moments</h4>
+
+                    <small>
+                        FILE 003
+                    </small>
+
+                    <div class="memory-content">
+
+                        There are so many funny moments between us
+                        that I don't think this database has enough
+                        storage.
+
+                        We tease each other a lot.
+                        We laugh a lot.
+                        We do stupid things a lot.
+
+                        Sometimes we are probably the only two
+                        people who find our jokes funny.
+
+                        But that's what makes them ours.
+
+                        I love all the chaos, all the stupid moments,
+                        all the laughing until we can't breathe,
+                        and all the memories that came from simply
+                        being ourselves together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Little Things</h4>
+
+                    <small>
+                        FILE 004
+                    </small>
+
+                    <div class="memory-content">
+
+                        I love everything about you.
+
+                        But sometimes, it's not the big things
+                        that stay with me.
+
+                        It's the little things you probably don't
+                        even realise you do.
+
+                        The way you talk, the way you react to
+                        things, the small habits you have, the little
+                        expressions you make, and all those tiny
+                        details that make you, you.
+
+                        Those things might seem insignificant to you.
+
+                        But to me, they're part of the reason I fell
+                        in love with you.
+
+                        I don't just love the big parts of who you are.
+
+                        I love the little parts too.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Difficult Days</h4>
+
+                    <small>
+                        FILE 005
+                    </small>
+
+                    <div class="memory-content">
+
+                        Not every day is going to be perfect.
+
+                        There will be difficult days, frustrating
+                        days, days where things don't go the way
+                        we want them to.
+
+                        But I want you to know that even on those
+                        days, I will keep choosing you.
+
+                        I want to be someone who supports you when
+                        things get hard, someone who listens when
+                        you need to talk, and someone who will always
+                        cheer for you, even when you don't feel like
+                        cheering for yourself.
+
+                        I don't expect every day to be easy.
+
+                        I just hope that whatever days come next,
+                        we get to face them together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>My Favourite Memory</h4>
+
+                    <small>
+                        FILE 006
+                    </small>
+
+                    <div class="memory-content">
+
+                        If you ask me what my favourite memory of us
+                        is right now, honestly, I'd probably say all
+                        the time we've spent together.
+
+                        But if I really have to choose one, I'd say
+                        our trip to Ipoh.
+
+                        I never thought I'd be going to your hometown
+                        together with your family, eating amazing
+                        food, exploring around, and just getting to
+                        experience that part of your life with you.
+
+                        It might have looked like just another trip,
+                        but it meant a lot to me.
+
+                        Getting to spend that time with you, being
+                        around your family, and creating those memories
+                        together is something I'll always remember.
+
+                        And honestly, I hope it's just one of many
+                        more trips we'll have together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>More To Come</h4>
+
+                    <small>
+                        FILE 007
+                    </small>
+
+                    <div class="memory-content">
+
+                        This file isn't finished.
+
+                        There are still so many places we haven't
+                        been, things we haven't done, birthdays we
+                        haven't celebrated, stupid jokes we haven't
+                        made, and memories we haven't created yet.
+
+                        So I'm leaving this database open.
+
+                        Because I want there to be a lot more to add.
+
+                        Stay tuned.
+
+                    </div>
+
+                </div>
+
+
             </div>
 
         </div>
 
+    </div>
 
-        <div class="memory-item">
+</div>
 
-            <div class="memory-header" onclick="toggleMemory(this)">
-                The Funny Moments
-                <span>+</span>
+
+<!-- =========================
+     STATISTICS MODAL
+========================= -->
+
+<div class="modal" id="statsModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                RELATIONSHIP STATISTICS
             </div>
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-There are so many funny moments between us that I don't think this database has enough storage.
-
-We tease each other a lot. We laugh a lot. We do stupid things a lot.
-
-Sometimes we are probably the only two people who find our jokes funny.
-
-But that's what makes them ours.
-
-I love all the chaos, all the stupid moments, all the laughing until we can't breathe, and all the memories that came from simply being ourselves together.
-                </div>
-            </div>
+            <button class="close" onclick="closeModal('statsModal')">
+                X
+            </button>
 
         </div>
 
 
-        <div class="memory-item">
+        <div class="window-content">
 
-            <div class="memory-header" onclick="toggleMemory(this)">
-                The Little Things
-                <span>+</span>
-            </div>
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-I love everything about you.
+            <div class="stat">
 
-But sometimes, it's not the big things that stay with me.
-
-It's the little things you probably don't even realise you do. The way you talk, the way you react to things, the small habits you have, the little expressions you make, and all those tiny details that make you, you.
-
-Those things might seem insignificant to you.
-
-But to me, they're part of the reason I fell in love with you.
-
-I don't just love the big parts of who you are.
-
-I love the little parts too.
+                <div class="stat-header">
+                    <span class="stat-name">MEMORIES CREATED</span>
+                    <span class="stat-value">∞</span>
                 </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
             </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">LAUGHS SHARED</span>
+                    <span class="stat-value">∞</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">STUPID 67 JOKES</span>
+                    <span class="stat-value">67+</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:87%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">ASU LEVEL</span>
+                    <span class="stat-value">MAX</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">QUALITY TIME</span>
+                    <span class="stat-value">99%</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:99%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">ADVENTURES</span>
+                    <span class="stat-value">LOADING</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:58%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">PHOTOS TOGETHER</span>
+                    <span class="stat-value">INCREASING</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:82%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">INSIDE JOKES</span>
+                    <span class="stat-value">TOO MANY</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">REASONS TO LOVE YOU</span>
+                    <span class="stat-value">UNCOUNTABLE</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">FUTURE MEMORIES</span>
+                    <span class="stat-value">PENDING</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:72%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">RELATIONSHIP STATUS</span>
+                    <span class="stat-value">PERMANENT</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FUTURE MODAL
+========================= -->
+
+<div class="modal" id="futureModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                FUTURE.EXE
+            </div>
+
+            <button class="close" onclick="closeModal('futureModal')">
+                X
+            </button>
 
         </div>
 
 
-        <div class="memory-item">
+        <div class="window-content future-terminal">
 
-            <div class="memory-header" onclick="toggleMemory(this)">
-                The Difficult Days
-                <span>+</span>
-            </div>
+            <p class="terminal-line">
+                &gt; ACCESSING FUTURE DATABASE...
+            </p>
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-Not every day is going to be perfect.
+            <p class="terminal-line">
+                &gt; Searching possible futures...
+            </p>
 
-There will be difficult days, frustrating days, days where things don't go the way we want them to.
+            <br>
 
-But I want you to know that even on those days, I will keep choosing you.
+            <p class="check">
+                [✓] More dates
+            </p>
 
-I want to be someone who supports you when things get hard, someone who listens when you need to talk, and someone who will always cheer for you, even when you don't feel like cheering for yourself.
+            <p class="check">
+                [✓] More adventures
+            </p>
 
-I don't expect every day to be easy.
+            <p class="check">
+                [✓] More birthdays
+            </p>
 
-I just hope that whatever days come next, we get to face them together.
-                </div>
+            <p class="check">
+                [✓] More stupid 67 jokes
+            </p>
+
+            <p class="check">
+                [✓] More asu
+            </p>
+
+            <p class="check">
+                [✓] More memories
+            </p>
+
+            <br>
+
+            <p class="terminal-line">
+                Running probability calculation...
+            </p>
+
+            <p>
+                Future birthdays together:
+            </p>
+
+            <div class="infinity">
+                ∞
             </div>
 
         </div>
 
+    </div>
 
-        <div class="memory-item">
+</div>
 
-            <div class="memory-header" onclick="toggleMemory(this)">
-                My Favourite Memory
-                <span>+</span>
+
+<!-- =========================
+     SECRET MODAL
+========================= -->
+
+<div class="modal" id="secretModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                SECRET FILE
             </div>
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-If you ask me what my favourite memory of us is right now, honestly, I'd probably say all the time we've spent together.
-
-But if I really have to choose one, I'd say our trip to Ipoh.
-
-I never thought I'd be going to your hometown together with your family, eating amazing food, exploring around, and just getting to experience that part of your life with you.
-
-It might have looked like just another trip, but it meant a lot to me.
-
-Getting to spend that time with you, being around your family, and creating those memories together is something I'll always remember.
-
-And honestly, I hope it's just one of many more trips we'll have together.
-                </div>
-            </div>
+            <button class="close" onclick="closeModal('secretModal')">
+                X
+            </button>
 
         </div>
 
 
-        <div class="memory-item">
+        <div class="window-content">
 
-            <div class="memory-header" onclick="toggleMemory(this)">
-                More To Come
-                <span>+</span>
-            </div>
+            <div class="secret-box">
 
-            <div class="memory-body">
-                <div class="memory-body-inner">
-This file isn't finished.
+                <h2>
+                    ACCESS GRANTED ✓
+                </h2>
 
-There are still so many places we haven't been, things we haven't done, birthdays we haven't celebrated, stupid jokes we haven't made, and memories we haven't created yet.
+                <p>
+                    You found the secret file.
+                </p>
 
-So I'm leaving this database open.
+                <br>
 
-Because I want there to be a lot more to add.
+                <p>
+                    There's no secret boo hoo.
+                </p>
 
-Stay tuned.
-                </div>
+                <p>
+                    I just wanted an excuse to tell you...
+                </p>
+
+                <br>
+
+                <p style="color: var(--green);">
+                    You're one of the best things that ever happened to me.
+                </p>
+
             </div>
 
         </div>
@@ -1071,19 +1428,25 @@ Stay tuned.
 
 <div class="modal" id="letterModal">
 
-    <div class="modal-content">
+    <div class="window">
 
-        <button class="close-button" onclick="closeModal('letterModal')">
-            ×
-        </button>
+        <div class="window-header">
 
-        <h2 class="modal-title">Love Letter</h2>
+            <div class="window-title">
+                LOVE LETTER.TXT
+            </div>
 
-        <p class="modal-subtitle">
-            Something I wanted you to know.
-        </p>
+            <button class="close" onclick="closeModal('letterModal')">
+                X
+            </button>
 
-        <div class="letter">
+        </div>
+
+
+        <div class="window-content">
+
+            <div class="letter">
+
 If you've made it this far, I guess the system has successfully revealed almost everything I wanted to say.
 
 But there are some things that probably don't belong in a database.
@@ -1146,88 +1509,11 @@ Happy Birthday, sayang.
 
 I love you.
 
-— END OF MESSAGE —
-        </div>
+                <div class="signature">
+                    — END OF MESSAGE —
+                </div>
 
-    </div>
-
-</div>
-
-
-<!-- =========================
-     FUTURE MODAL
-========================= -->
-
-<div class="modal" id="futureModal">
-
-    <div class="modal-content">
-
-        <button class="close-button" onclick="closeModal('futureModal')">
-            ×
-        </button>
-
-        <h2 class="modal-title">Future.exe</h2>
-
-        <p class="modal-subtitle">
-            Searching possible futures...
-        </p>
-
-        <div class="future-list">
-
-            <li>More dates</li>
-            <li>More adventures</li>
-            <li>More birthdays</li>
-            <li>More stupid 67 jokes</li>
-            <li>More asu</li>
-            <li>More memories</li>
-
-        </div>
-
-        <p style="text-align:center; color:var(--muted);">
-            Running probability calculation...
-        </p>
-
-        <div class="future-number">
-            ∞
-        </div>
-
-        <p style="text-align:center; color:var(--muted);">
-            Future birthdays together
-        </p>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
-     SECRET MODAL
-========================= -->
-
-<div class="modal" id="secretModal">
-
-    <div class="modal-content">
-
-        <button class="close-button" onclick="closeModal('secretModal')">
-            ×
-        </button>
-
-        <div class="secret-content">
-
-            <div class="secret-symbol">✓</div>
-
-            <h2 class="modal-title" style="padding:0;">
-                Access Granted
-            </h2>
-
-            <p>
-You found the secret file.
-
-There's no secret boo hoo.
-I just wanted an excuse to tell you...
-
-You're one of the best things that ever happened to me.
-            </p>
+            </div>
 
         </div>
 
@@ -1237,32 +1523,45 @@ You're one of the best things that ever happened to me.
 
 
 <!-- =========================
-     BIRTHDAY QUIZ
+     BIRTHDAY QUIZ MODAL
 ========================= -->
 
 <div class="modal" id="birthdayModal">
 
-    <div class="modal-content">
+    <div class="window">
 
-        <button class="close-button" onclick="closeModal('birthdayModal')">
-            ×
-        </button>
+        <div class="window-header">
 
-        <h2 class="modal-title">Birthday.exe</h2>
-
-        <p class="modal-subtitle">
-            Relationship knowledge test.
-        </p>
-
-        <div id="quizContainer">
-
-            <div class="quiz-progress">
-                <div class="quiz-progress-bar" id="quizProgress"></div>
+            <div class="window-title">
+                BIRTHDAY.EXE
             </div>
 
-            <div class="quiz-question" id="quizQuestion"></div>
+            <button class="close" onclick="closeModal('birthdayModal')">
+                X
+            </button>
 
-            <div class="quiz-options" id="quizOptions"></div>
+        </div>
+
+
+        <div class="window-content">
+
+            <div id="quizContainer">
+
+                <div class="quiz-progress" id="quizProgress">
+                    QUESTION 01 / 05
+                </div>
+
+                <div class="quiz-question" id="quizQuestion">
+                    Loading question...
+                </div>
+
+                <div class="quiz-options" id="quizOptions">
+                </div>
+
+                <div class="quiz-feedback" id="quizFeedback">
+                </div>
+
+            </div>
 
         </div>
 
@@ -1277,38 +1576,85 @@ You're one of the best things that ever happened to me.
 
 <div class="modal" id="loveModal">
 
-    <div class="modal-content">
+    <div class="window">
 
-        <button class="close-button" onclick="closeModal('loveModal')">
-            ×
-        </button>
+        <div class="window-header">
 
-        <h2 class="modal-title">Love.exe</h2>
+            <div class="window-title">
+                LOVE.EXE
+            </div>
 
-        <p class="modal-subtitle">
-            Attempting to terminate application...
-        </p>
+            <button class="close" onclick="closeModal('loveModal')">
+                X
+            </button>
 
-        <div class="love-terminal">
-&gt; Attempting to terminate Love.exe...
+        </div>
 
-Stopping memories...
-FAILED.
 
-Removing Elu...
-FAILED.
+        <div class="window-content love-error">
 
-Removing love...
-FAILED.
+            <p>
+                &gt; Attempting to terminate Love.exe...
+            </p>
 
-<span class="error">CRITICAL ERROR</span>
+            <br>
 
-Love.exe cannot be terminated.
+            <p class="green">
+                Stopping memories...
+            </p>
 
-Reason:
-<span class="highlight">We are one noww.</span>
+            <p>
+                FAILED.
+            </p>
 
-&gt;&gt;&gt; Program will continue indefinitely.
+            <br>
+
+            <p class="green">
+                Removing Elu...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p class="green">
+                Removing love...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p>
+                CRITICAL ERROR
+            </p>
+
+            <br>
+
+            <p class="green">
+                Love.exe cannot be terminated.
+            </p>
+
+            <br>
+
+            <p>
+                Reason:
+            </p>
+
+            <p class="green">
+                We are one noww.
+            </p>
+
+            <br>
+
+            <p>
+                &gt;&gt;&gt; Program will continue indefinitely.
+            </p>
+
         </div>
 
     </div>
@@ -1319,34 +1665,68 @@ Reason:
 <script>
 
     /* =========================
-       BOOT
+       BOOT SEQUENCE
     ========================= */
 
-    const progress = document.getElementById("progress");
-    const bootScreen = document.getElementById("bootScreen");
-    const mainContent = document.getElementById("mainContent");
+    const bootMessages = [
+        "> Initializing ELU.EXE...",
+        "> Loading memory database...",
+        "> Loading relationship statistics...",
+        "> Searching future possibilities...",
+        "> Loading important files...",
+        "> Checking love.exe...",
+        "> System integrity: PERFECT",
+        "> Personalization detected.",
+        "> Welcome back, sayang."
+    ];
+
+    const bootText = document.getElementById("bootText");
+    const progressBar = document.getElementById("progressBar");
     const enterButton = document.getElementById("enterButton");
 
-    let progressValue = 0;
+    let bootIndex = 0;
 
-    const bootInterval = setInterval(() => {
+    function bootSequence() {
 
-        progressValue += 2;
+        if (bootIndex < bootMessages.length) {
 
-        progress.style.width = progressValue + "%";
+            const line = document.createElement("div");
 
-        if (progressValue >= 100) {
-            clearInterval(bootInterval);
-            enterButton.style.display = "inline-block";
+            line.className = "boot-line";
+
+            line.textContent = bootMessages[bootIndex];
+
+            bootText.appendChild(line);
+
+            bootIndex++;
+
+            progressBar.style.width =
+                ((bootIndex / bootMessages.length) * 100) + "%";
+
+            setTimeout(bootSequence, 450);
+
+        } else {
+
+            setTimeout(() => {
+
+                enterButton.style.display = "block";
+
+            }, 500);
+
         }
 
-    }, 25);
+    }
+
+    bootSequence();
 
 
     enterButton.addEventListener("click", () => {
 
-        bootScreen.classList.add("hidden");
-        mainContent.classList.add("visible");
+        document.getElementById("bootScreen").style.display = "none";
+
+        document.getElementById("mainSystem").style.display = "block";
+
+        window.scrollTo(0, 0);
 
     });
 
@@ -1360,10 +1740,6 @@ Reason:
         document.getElementById(id).classList.add("active");
 
         document.body.style.overflow = "hidden";
-
-        if (id === "birthdayModal") {
-            startQuiz();
-        }
 
     }
 
@@ -1379,11 +1755,14 @@ Reason:
 
     document.querySelectorAll(".modal").forEach(modal => {
 
-        modal.addEventListener("click", (event) => {
+        modal.addEventListener("click", function(event) {
 
             if (event.target === modal) {
+
                 modal.classList.remove("active");
+
                 document.body.style.overflow = "";
+
             }
 
         });
@@ -1391,12 +1770,14 @@ Reason:
     });
 
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", function(event) {
 
         if (event.key === "Escape") {
 
-            document.querySelectorAll(".modal.active").forEach(modal => {
+            document.querySelectorAll(".modal").forEach(modal => {
+
                 modal.classList.remove("active");
+
             });
 
             document.body.style.overflow = "";
@@ -1407,77 +1788,32 @@ Reason:
 
 
     /* =========================
-       MEMORY ACCORDION
+       MEMORY DATABASE
     ========================= */
 
-    function toggleMemory(header) {
+    document.querySelectorAll(".memory-item").forEach(item => {
 
-        const body = header.nextElementSibling;
-        const symbol = header.querySelector("span");
+        item.addEventListener("click", () => {
 
-        if (body.style.maxHeight) {
+            item.classList.toggle("open");
 
-            body.style.maxHeight = null;
-            symbol.textContent = "+";
+        });
 
-        } else {
-
-            body.style.maxHeight = body.scrollHeight + "px";
-            symbol.textContent = "−";
-
-        }
-
-    }
-
-
-    /* =========================
-       SECRET FILE
-    ========================= */
-
-    const secretCard = document.getElementById("secretCard");
-
-    /*
-       Secret File remains locked.
-       To unlock it, change the value below to true
-       or connect it to whatever hidden interaction
-       you want to use later.
-    */
-
-    let secretUnlocked = false;
-
-
-    function unlockSecret() {
-
-        secretUnlocked = true;
-
-        secretCard.classList.remove("locked");
-        secretCard.classList.add("unlocked");
-
-        secretCard.onclick = () => openModal("secretModal");
-
-    }
-
-
-    /*
-       Keep locked for now.
-       You can later call:
-       unlockSecret();
-       after a secret action.
-    */
+    });
 
 
     /* =========================
        BIRTHDAY QUIZ
     ========================= */
 
-    const questions = [
+    const quizQuestions = [
 
         {
             question:
                 "Where did we go together that became one of my favourite memories?",
 
             options: [
-                "KL",
+                "Kuala Lumpur",
                 "Ipoh",
                 "Penang",
                 "Melaka"
@@ -1546,41 +1882,34 @@ Reason:
 
 
     let currentQuestion = 0;
-    let score = 0;
-    let quizFinished = false;
+    let quizScore = 0;
+    let answered = false;
 
 
-    function startQuiz() {
+    function loadQuestion() {
 
-        if (quizFinished) return;
+        answered = false;
 
-        currentQuestion = 0;
-        score = 0;
+        const question = quizQuestions[currentQuestion];
 
-        showQuestion();
+        document.getElementById("quizProgress").textContent =
+            "QUESTION " +
+            String(currentQuestion + 1).padStart(2, "0") +
+            " / " +
+            String(quizQuestions.length).padStart(2, "0");
 
-    }
+
+        document.getElementById("quizQuestion").textContent =
+            question.question;
 
 
-    function showQuestion() {
-
-        const questionElement =
-            document.getElementById("quizQuestion");
-
-        const optionsElement =
+        const optionsContainer =
             document.getElementById("quizOptions");
 
-        const progressElement =
-            document.getElementById("quizProgress");
+        optionsContainer.innerHTML = "";
 
-        const question = questions[currentQuestion];
 
-        questionElement.textContent = question.question;
-
-        optionsElement.innerHTML = "";
-
-        progressElement.style.width =
-            ((currentQuestion + 1) / questions.length * 100) + "%";
+        document.getElementById("quizFeedback").textContent = "";
 
 
         question.options.forEach((option, index) => {
@@ -1591,10 +1920,13 @@ Reason:
 
             button.textContent = option;
 
-            button.onclick = () =>
+            button.addEventListener("click", () => {
+
                 answerQuestion(index);
 
-            optionsElement.appendChild(button);
+            });
+
+            optionsContainer.appendChild(button);
 
         });
 
@@ -1603,51 +1935,105 @@ Reason:
 
     function answerQuestion(selected) {
 
-        const question = questions[currentQuestion];
-
-        if (selected === question.answer) {
-            score++;
+        if (answered) {
+            return;
         }
 
-        currentQuestion++;
+        answered = true;
 
-        if (currentQuestion >= questions.length) {
+        const question = quizQuestions[currentQuestion];
 
-            showQuizResult();
+        const buttons =
+            document.querySelectorAll(".quiz-option");
+
+
+        if (selected === question.answer) {
+
+            buttons[selected].classList.add("correct");
+
+            quizScore++;
+
+            document.getElementById("quizFeedback").textContent =
+                "✓ CORRECT. Memory unlocked.";
 
         } else {
 
-            setTimeout(showQuestion, 250);
+            buttons[selected].classList.add("wrong");
+
+            buttons[question.answer].classList.add("correct");
+
+            document.getElementById("quizFeedback").textContent =
+                "Not quite. The correct answer has been revealed.";
 
         }
+
+
+        setTimeout(() => {
+
+            currentQuestion++;
+
+            if (currentQuestion < quizQuestions.length) {
+
+                loadQuestion();
+
+            } else {
+
+                showQuizResult();
+
+            }
+
+        }, 1300);
 
     }
 
 
     function showQuizResult() {
 
-        quizFinished = true;
+        const container =
+            document.getElementById("quizContainer");
 
-        document.getElementById("quizContainer").innerHTML = `
+
+        container.innerHTML = `
 
             <div class="quiz-result">
 
-                <h3>Birthday Protocol Complete</h3>
+                <h2>
+                    BIRTHDAY PROTOCOL COMPLETE
+                </h2>
 
                 <p>
-Relationship knowledge:
-${score}/5
+                    Relationship knowledge:
+                </p>
 
-Compatibility level:
-MAXIMUM
+                <div class="big">
+                    ${quizScore}/${quizQuestions.length}
+                </div>
 
-Memories unlocked:
-ALL
+                <p>
+                    System analysis complete.
+                </p>
 
-You've successfully completed the test.
+                <br>
 
-There is nothing else to calculate.
-You already know the important part.
+                <p class="muted">
+                    Compatibility level: MAXIMUM
+                </p>
+
+                <p class="muted">
+                    Memories unlocked: ALL
+                </p>
+
+                <br>
+
+                <p style="color: var(--green);">
+                    You've successfully completed the test.
+                </p>
+
+                <br>
+
+                <p>
+                    There is nothing else to calculate.
+                    You already know the important part.
                 </p>
 
             </div>
@@ -1655,6 +2041,9 @@ You already know the important part.
         `;
 
     }
+
+
+    loadQuestion();
 
 </script>
 
