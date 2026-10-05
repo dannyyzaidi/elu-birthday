@@ -2,20 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ELU OS — Birthday Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>ELU.EXE</title>
 
 <style>
     * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --green: #39ff88;
+        --green-dark: #0f8f4f;
+        --green-soft: #7dffb2;
+        --green-dim: #1f8c52;
+        --black: #050805;
+        --panel: #09110b;
+        --panel-light: #0d180f;
+        --border: #1c6b3e;
+        --text: #c7ffd9;
+        --muted: #6ba982;
+        --danger: #ff5555;
+    }
+
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        background: var(--black);
+        color: var(--text);
+        font-family: "Courier New", monospace;
     }
 
     body {
-        margin: 0;
-        min-height: 100vh;
-        background: #050505;
-        color: #e8e8e8;
-        font-family: "Courier New", monospace;
         overflow-x: hidden;
     }
 
@@ -24,191 +45,236 @@
         font-family: inherit;
     }
 
-    button {
-        cursor: pointer;
-    }
-
     /* =========================
        BOOT SCREEN
-       ========================= */
+    ========================= */
 
     #bootScreen {
-        min-height: 100vh;
+        position: fixed;
+        inset: 0;
+        background: #020402;
+        z-index: 9999;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 30px;
-        background:
-            radial-gradient(circle at center, #171717 0%, #050505 60%);
+        padding: 20px;
     }
 
-    .boot-box {
-        width: min(700px, 100%);
+    .boot-container {
+        width: 100%;
+        max-width: 700px;
     }
 
     .boot-title {
-        font-size: clamp(35px, 8vw, 75px);
+        color: var(--green);
+        font-size: clamp(32px, 10vw, 72px);
         font-weight: bold;
-        letter-spacing: 8px;
-        color: #ff6b9d;
-        text-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
+        text-align: center;
+        text-shadow: 0 0 15px rgba(57, 255, 136, 0.5);
         margin-bottom: 10px;
+        letter-spacing: 4px;
     }
 
     .boot-subtitle {
-        color: #888;
-        margin-bottom: 35px;
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 40px;
+        font-size: 13px;
     }
 
-    .boot-lines {
-        color: #aaa;
-        line-height: 1.9;
-        min-height: 160px;
+    #bootText {
+        min-height: 180px;
+        font-size: 13px;
+        line-height: 1.8;
+        color: var(--green-soft);
     }
 
-    .progress-container {
-        height: 18px;
-        border: 1px solid #444;
+    .boot-line {
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+    }
+
+    .progress-wrapper {
+        width: 100%;
+        height: 12px;
+        border: 1px solid var(--border);
         margin-top: 20px;
-        overflow: hidden;
+        padding: 2px;
     }
 
     .progress-bar {
         height: 100%;
         width: 0%;
-        background: #ff6b9d;
-        box-shadow: 0 0 15px #ff6b9d;
+        background: var(--green);
+        box-shadow: 0 0 10px rgba(57, 255, 136, 0.5);
         transition: width 0.2s;
     }
 
-    .boot-button {
+    #enterButton {
         display: none;
+        width: 100%;
         margin-top: 30px;
-        padding: 14px 25px;
+        padding: 15px;
         background: transparent;
-        border: 1px solid #ff6b9d;
-        color: #ff6b9d;
-        font-size: 16px;
+        border: 1px solid var(--green);
+        color: var(--green);
+        cursor: pointer;
+        font-size: 15px;
+        transition: 0.2s;
     }
 
-    .boot-button:hover {
-        background: #ff6b9d;
-        color: #000;
+    #enterButton:hover,
+    #enterButton:active {
+        background: var(--green);
+        color: #020402;
+        box-shadow: 0 0 20px rgba(57, 255, 136, 0.35);
     }
-
 
     /* =========================
-       MAIN OS
-       ========================= */
+       MAIN SYSTEM
+    ========================= */
 
-    #os {
+    #mainSystem {
         display: none;
         min-height: 100vh;
-        background: #080808;
+        background:
+            radial-gradient(circle at top, rgba(20, 90, 50, 0.12), transparent 40%),
+            var(--black);
     }
 
     .topbar {
-        height: 55px;
-        border-bottom: 1px solid #292929;
+        border-bottom: 1px solid var(--border);
+        padding: 16px 20px;
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        padding: 0 22px;
-        background: #0d0d0d;
+        align-items: center;
+        gap: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(5, 8, 5, 0.95);
+        backdrop-filter: blur(8px);
     }
 
-    .logo {
-        color: #ff6b9d;
+    .system-name {
+        color: var(--green);
         font-weight: bold;
         letter-spacing: 2px;
+        font-size: 15px;
     }
 
     .system-status {
-        color: #777;
-        font-size: 13px;
+        color: var(--muted);
+        font-size: 11px;
     }
 
-    .desktop {
-        max-width: 1100px;
-        margin: auto;
-        padding: 50px 25px;
+    .system-status span {
+        color: var(--green);
     }
 
     .welcome {
-        margin-bottom: 45px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 45px 20px 20px;
     }
 
     .welcome h1 {
-        font-size: clamp(28px, 5vw, 50px);
-        margin: 0 0 12px;
-    }
-
-    .welcome h1 span {
-        color: #ff6b9d;
+        color: var(--green);
+        font-size: clamp(26px, 7vw, 42px);
+        margin-bottom: 12px;
     }
 
     .welcome p {
-        color: #888;
-        max-width: 650px;
-        line-height: 1.7;
+        max-width: 700px;
+        color: var(--muted);
+        line-height: 1.8;
+        font-size: 13px;
     }
 
+    /* =========================
+       APP GRID
+    ========================= */
+
     .apps {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 25px 20px 50px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 15px;
     }
 
     .app {
-        min-height: 145px;
-        background: #101010;
-        border: 1px solid #282828;
-        color: #ddd;
-        padding: 25px;
-        text-align: left;
+        min-height: 130px;
+        border: 1px solid var(--border);
+        background: linear-gradient(
+            145deg,
+            rgba(13, 24, 15, 0.95),
+            rgba(6, 12, 7, 0.95)
+        );
+        padding: 18px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
         transition: 0.2s;
     }
 
-    .app:hover {
-        border-color: #ff6b9d;
-        transform: translateY(-3px);
-        background: #151515;
+    .app::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(57, 255, 136, 0.06),
+            transparent
+        );
+        transform: translateX(-100%);
+        transition: 0.4s;
     }
 
-    .app-icon {
-        font-size: 35px;
-        margin-bottom: 18px;
+    .app:hover::before {
+        transform: translateX(100%);
     }
 
-    .app-name {
-        font-weight: bold;
-        margin-bottom: 7px;
+    .app:hover,
+    .app:active {
+        border-color: var(--green);
+        transform: translateY(-2px);
+        box-shadow: 0 0 18px rgba(57, 255, 136, 0.12);
     }
 
-    .app-description {
-        font-size: 12px;
-        color: #666;
+    .app-number {
+        color: var(--muted);
+        font-size: 10px;
+        margin-bottom: 15px;
+    }
+
+    .app h3 {
+        color: var(--green);
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+
+    .app p {
+        color: var(--muted);
+        font-size: 11px;
         line-height: 1.5;
     }
 
-    .locked {
-        opacity: 0.45;
-    }
-
-
     /* =========================
        MODAL
-       ========================= */
+    ========================= */
 
     .modal {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.85);
+        background: rgba(0, 0, 0, 0.82);
+        z-index: 500;
         display: none;
-        align-items: center;
         justify-content: center;
-        padding: 20px;
-        z-index: 100;
+        align-items: center;
+        padding: 15px;
     }
 
     .modal.active {
@@ -216,283 +282,395 @@
     }
 
     .window {
-        width: min(750px, 100%);
+        width: 100%;
+        max-width: 800px;
         max-height: 90vh;
         overflow-y: auto;
-        background: #0c0c0c;
-        border: 1px solid #333;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        background: var(--panel);
+        border: 1px solid var(--green);
+        box-shadow: 0 0 30px rgba(57, 255, 136, 0.15);
+        animation: windowOpen 0.2s ease-out;
     }
 
     .window-header {
-        padding: 14px 18px;
-        border-bottom: 1px solid #292929;
+        position: sticky;
+        top: 0;
+        background: #071008;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #111;
+        z-index: 5;
     }
 
     .window-title {
-        color: #ff6b9d;
+        color: var(--green);
+        font-size: 13px;
+        font-weight: bold;
     }
 
     .close {
-        border: none;
         background: transparent;
-        color: #777;
-        font-size: 22px;
-    }
-
-    .close:hover {
-        color: white;
-    }
-
-    .window-body {
-        padding: 28px;
-    }
-
-
-    /* =========================
-       TERMINAL
-       ========================= */
-
-    .terminal {
-        background: #030303;
-        border: 1px solid #222;
-        padding: 20px;
-        line-height: 1.8;
-        min-height: 300px;
-    }
-
-    .pink {
-        color: #ff6b9d;
-    }
-
-    .green {
-        color: #8aff9c;
-    }
-
-    .yellow {
-        color: #ffe08a;
-    }
-
-    .muted {
-        color: #666;
-    }
-
-    .terminal-button {
-        margin-top: 20px;
-        padding: 12px 18px;
-        background: transparent;
-        color: #ff6b9d;
-        border: 1px solid #ff6b9d;
-    }
-
-    .terminal-button:hover {
-        background: #ff6b9d;
-        color: black;
-    }
-
-
-    /* =========================
-       MEMORY CARDS
-       ========================= */
-
-    .memory-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 12px;
-    }
-
-    .memory {
-        padding: 20px;
-        min-height: 130px;
-        background: #111;
-        border: 1px solid #292929;
+        border: 1px solid var(--border);
+        color: var(--green);
+        width: 30px;
+        height: 30px;
         cursor: pointer;
     }
 
-    .memory:hover {
-        border-color: #ff6b9d;
+    .close:hover {
+        background: var(--green);
+        color: #000;
     }
 
-    .memory-number {
-        color: #555;
-        font-size: 12px;
-        margin-bottom: 15px;
+    .window-content {
+        padding: 22px;
+        line-height: 1.8;
+        font-size: 13px;
     }
 
-    .memory-title {
-        color: #eee;
+    .window-content p {
+        margin-bottom: 18px;
     }
 
+    .terminal-line {
+        color: var(--green);
+        margin-bottom: 6px;
+    }
+
+    .muted {
+        color: var(--muted);
+    }
+
+    /* =========================
+       MEMORIES
+    ========================= */
+
+    .memory-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .memory-item {
+        border: 1px solid var(--border);
+        padding: 15px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .memory-item:hover {
+        border-color: var(--green);
+        background: rgba(57, 255, 136, 0.04);
+    }
+
+    .memory-item h4 {
+        color: var(--green);
+        margin-bottom: 5px;
+    }
+
+    .memory-item small {
+        color: var(--muted);
+    }
+
+    .memory-content {
+        display: none;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed var(--border);
+        color: var(--text);
+        line-height: 1.8;
+    }
+
+    .memory-item.open .memory-content {
+        display: block;
+    }
 
     /* =========================
        STATISTICS
-       ========================= */
+    ========================= */
 
     .stat {
-        margin-bottom: 22px;
+        margin-bottom: 23px;
     }
 
     .stat-header {
         display: flex;
         justify-content: space-between;
+        gap: 15px;
         margin-bottom: 7px;
+        font-size: 12px;
+    }
+
+    .stat-name {
+        color: var(--text);
     }
 
     .stat-value {
-        color: #ff6b9d;
+        color: var(--green);
     }
 
-    .stat-bar {
-        height: 10px;
-        background: #1c1c1c;
-        overflow: hidden;
-    }
-
-    .stat-fill {
-        height: 100%;
-        background: #ff6b9d;
-    }
-
-
-    /* =========================
-       SECRET
-       ========================= */
-
-    .secret-input {
+    .meter {
         width: 100%;
-        padding: 14px;
-        margin-top: 15px;
-        background: #050505;
-        border: 1px solid #333;
-        color: white;
-        outline: none;
+        height: 10px;
+        border: 1px solid var(--border);
+        padding: 1px;
     }
 
-    .secret-input:focus {
-        border-color: #ff6b9d;
+    .meter-fill {
+        height: 100%;
+        background: var(--green);
+        box-shadow: 0 0 8px rgba(57, 255, 136, 0.35);
     }
-
-    .secret-button {
-        margin-top: 12px;
-        padding: 12px 18px;
-        background: #ff6b9d;
-        border: none;
-        color: black;
-    }
-
-    #secretResult {
-        margin-top: 20px;
-        line-height: 1.8;
-    }
-
 
     /* =========================
-       LOVE LETTER
-       ========================= */
+       FUTURE
+    ========================= */
 
-    .letter {
+    .future-terminal {
         line-height: 2;
-        color: #ccc;
-        font-family: Georgia, serif;
-        font-size: 17px;
     }
 
-    .letter strong {
-        color: #ff6b9d;
-    }
-
-
-    /* =========================
-       BIRTHDAY REVEAL
-       ========================= */
-
-    .birthday {
-        text-align: center;
-        padding: 35px 15px;
-    }
-
-    .birthday h1 {
-        font-size: clamp(35px, 8vw, 70px);
-        color: #ff6b9d;
-        margin: 10px 0 25px;
-        text-shadow: 0 0 25px rgba(255,107,157,0.5);
-    }
-
-    .heart {
-        font-size: 70px;
-        animation: heartbeat 1.2s infinite;
-    }
-
-    @keyframes heartbeat {
-        0%, 100% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.15);
-        }
+    .future-terminal .check {
+        color: var(--green);
     }
 
     .infinity {
-        font-size: 80px;
-        color: #ff6b9d;
-        margin: 20px;
+        font-size: 45px;
+        color: var(--green);
+        text-align: center;
+        margin-top: 15px;
+        text-shadow: 0 0 15px rgba(57, 255, 136, 0.35);
     }
 
+    /* =========================
+       SECRET FILE
+    ========================= */
+
+    .secret-box {
+        border: 1px dashed var(--green);
+        padding: 25px;
+        text-align: center;
+    }
+
+    .secret-box h2 {
+        color: var(--green);
+        margin-bottom: 20px;
+    }
 
     /* =========================
-       RESPONSIVE
-       ========================= */
+       LOVE LETTER
+    ========================= */
 
-    @media (max-width: 600px) {
-        .desktop {
-            padding: 30px 15px;
+    .letter {
+        line-height: 2;
+        white-space: pre-line;
+    }
+
+    .letter .signature {
+        color: var(--green);
+        margin-top: 25px;
+    }
+
+    /* =========================
+       BIRTHDAY QUIZ
+    ========================= */
+
+    .quiz-question {
+        color: var(--green);
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .quiz-options {
+        display: grid;
+        gap: 10px;
+    }
+
+    .quiz-option {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 14px;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 12px;
+    }
+
+    .quiz-option:hover {
+        border-color: var(--green);
+        color: var(--green);
+    }
+
+    .quiz-option.correct {
+        border-color: var(--green);
+        background: rgba(57, 255, 136, 0.08);
+        color: var(--green);
+    }
+
+    .quiz-option.wrong {
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    .quiz-feedback {
+        min-height: 30px;
+        margin-top: 18px;
+        color: var(--green);
+    }
+
+    .quiz-progress {
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 20px;
+    }
+
+    .quiz-result {
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .quiz-result h2 {
+        color: var(--green);
+        margin-bottom: 20px;
+    }
+
+    .quiz-result .big {
+        font-size: 35px;
+        color: var(--green);
+        margin: 20px 0;
+    }
+
+    /* =========================
+       LOVE.EXE
+    ========================= */
+
+    .love-error {
+        color: var(--danger);
+        line-height: 2;
+    }
+
+    .love-error .green {
+        color: var(--green);
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .footer {
+        border-top: 1px solid var(--border);
+        text-align: center;
+        padding: 25px 20px;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    /* =========================
+       ANIMATIONS
+    ========================= */
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes windowOpen {
+        from {
+            opacity: 0;
+            transform: scale(0.97);
         }
 
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 800px) {
+        .apps {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 500px) {
         .topbar {
-            padding: 0 15px;
+            padding: 13px 15px;
+        }
+
+        .system-name {
+            font-size: 12px;
         }
 
         .system-status {
-            display: none;
+            font-size: 9px;
         }
 
-        .window-body {
-            padding: 20px;
+        .welcome {
+            padding: 35px 15px 10px;
+        }
+
+        .apps {
+            padding: 20px 15px 40px;
+            gap: 10px;
+        }
+
+        .app {
+            min-height: 120px;
+            padding: 14px;
+        }
+
+        .app h3 {
+            font-size: 13px;
+        }
+
+        .app p {
+            font-size: 10px;
+        }
+
+        .window-content {
+            padding: 18px;
+            font-size: 12px;
+        }
+
+        .boot-container {
+            padding: 5px;
         }
     }
 </style>
 </head>
 
-
 <body>
 
-
-<!-- =========================================================
+<!-- =========================
      BOOT SCREEN
-     ========================================================== -->
+========================= -->
 
 <div id="bootScreen">
 
-    <div class="boot-box">
+    <div class="boot-container">
 
         <div class="boot-title">ELU.EXE</div>
 
         <div class="boot-subtitle">
-            Birthday Edition — Personal Relationship Operating System
+            PERSONAL MEMORY SYSTEM
         </div>
 
-        <div class="boot-lines" id="bootLines"></div>
+        <div id="bootText"></div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progress"></div>
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        <button class="boot-button" id="bootButton">
-            ENTER ELU OS ❤️
+        <button id="enterButton">
+            ENTER ELU.EXE
         </button>
 
     </div>
@@ -500,149 +678,984 @@
 </div>
 
 
-<!-- =========================================================
-     MAIN OS
-     ========================================================== -->
+<!-- =========================
+     MAIN SYSTEM
+========================= -->
 
-<div id="os">
+<div id="mainSystem">
 
     <div class="topbar">
 
-        <div class="logo">
-            ELU OS
+        <div class="system-name">
+            ELU.EXE
         </div>
 
         <div class="system-status">
-            SYSTEM STATUS: <span class="green">ONLINE</span>
+            SYSTEM STATUS:
+            <span>RUNNING</span>
         </div>
 
     </div>
 
 
-    <main class="desktop">
+    <section class="welcome">
 
-        <section class="welcome">
+        <h1>Welcome back, sayang.</h1>
 
-            <h1>
-                Welcome back, <span>Elu.</span>
-            </h1>
+        <p>
+            You've entered something built entirely for you.
+            There isn't much useful software here.
+            Just a collection of memories, little moments,
+            things I love about you, and a future I hope we
+            get to keep writing together.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         APPLICATIONS
+    ========================== -->
+
+    <section class="apps">
+
+        <div class="app" onclick="openModal('memoriesModal')">
+
+            <div class="app-number">
+                APP 01
+            </div>
+
+            <h3>MEMORIES</h3>
 
             <p>
-                You've successfully entered the most important system
-                on this computer.
+                A collection of moments worth remembering.
             </p>
+
+        </div>
+
+
+        <div class="app" onclick="openModal('statsModal')">
+
+            <div class="app-number">
+                APP 02
+            </div>
+
+            <h3>STATISTICS</h3>
 
             <p>
-                Unfortunately, there is no useful software installed.
-                Only memories, love, and boyfriend.exe.
+                Relationship statistics and system analysis.
             </p>
 
-        </section>
+        </div>
 
 
-        <!-- APP GRID -->
+        <div class="app" onclick="openModal('futureModal')">
 
-        <section class="apps">
+            <div class="app-number">
+                APP 03
+            </div>
 
-            <button class="app" data-app="scan">
-                <div class="app-icon">🔍</div>
-                <div class="app-name">Elu.exe</div>
-                <div class="app-description">
-                    Run a complete personality and cuteness scan.
-                </div>
-            </button>
+            <h3>FUTURE.EXE</h3>
 
+            <p>
+                Access possible future memories.
+            </p>
 
-            <button class="app" data-app="memories">
-                <div class="app-icon">📁</div>
-                <div class="app-name">Memory Database</div>
-                <div class="app-description">
-                    Access memories stored in boyfriend.exe.
-                </div>
-            </button>
+        </div>
 
 
-            <button class="app" data-app="stats">
-                <div class="app-icon">📊</div>
-                <div class="app-name">Relationship Stats</div>
-                <div class="app-description">
-                    View highly scientific relationship statistics.
-                </div>
-            </button>
+        <div class="app" onclick="openModal('secretModal')">
+
+            <div class="app-number">
+                APP 04
+            </div>
+
+            <h3>SECRET FILE</h3>
+
+            <p>
+                Unauthorized access may reveal something important.
+            </p>
+
+        </div>
 
 
-            <button class="app" data-app="future">
-                <div class="app-icon">🔮</div>
-                <div class="app-name">Future.exe</div>
-                <div class="app-description">
-                    Calculate possible future adventures.
-                </div>
-            </button>
+        <div class="app" onclick="openModal('letterModal')">
+
+            <div class="app-number">
+                APP 05
+            </div>
+
+            <h3>LOVE LETTER</h3>
+
+            <p>
+                A message that doesn't belong in a database.
+            </p>
+
+        </div>
 
 
-            <button class="app" data-app="secret">
-                <div class="app-icon">🔐</div>
-                <div class="app-name">Secret File</div>
-                <div class="app-description">
-                    Restricted access. Password required.
-                </div>
-            </button>
+        <div class="app" onclick="openModal('birthdayModal')">
+
+            <div class="app-number">
+                APP 06
+            </div>
+
+            <h3>BIRTHDAY.EXE</h3>
+
+            <p>
+                A small test before accessing the final protocol.
+            </p>
+
+        </div>
 
 
-            <button class="app" data-app="letter">
-                <div class="app-icon">💌</div>
-                <div class="app-name">Love Letter</div>
-                <div class="app-description">
-                    Open a message from boyfriend.exe.
-                </div>
-            </button>
+        <div class="app" onclick="openModal('loveModal')">
+
+            <div class="app-number">
+                APP 07
+            </div>
+
+            <h3>LOVE.EXE</h3>
+
+            <p>
+                System termination utility.
+            </p>
+
+        </div>
+
+    </section>
 
 
-            <button class="app" data-app="birthday">
-                <div class="app-icon">🎂</div>
-                <div class="app-name">Birthday.exe</div>
-                <div class="app-description">
-                    Execute the final birthday protocol.
-                </div>
-            </button>
-
-
-            <button class="app" data-app="terminate">
-                <div class="app-icon">❤️</div>
-                <div class="app-name">Love.exe</div>
-                <div class="app-description">
-                    Attempt to terminate the relationship.
-                </div>
-            </button>
-
-        </section>
-
-    </main>
+    <div class="footer">
+        ELU.EXE // PERSONAL SYSTEM // VERSION 1.0
+    </div>
 
 </div>
 
 
-<!-- =========================================================
-     MODAL
-     ========================================================== -->
+<!-- =========================
+     MEMORIES MODAL
+========================= -->
 
-<div class="modal" id="modal">
+<div class="modal" id="memoriesModal">
 
     <div class="window">
 
         <div class="window-header">
 
-            <div class="window-title" id="modalTitle">
-                Application
+            <div class="window-title">
+                MEMORIES.DATABASE
             </div>
 
-            <button class="close" id="closeModal">
-                ×
+            <button class="close" onclick="closeModal('memoriesModal')">
+                X
             </button>
 
         </div>
 
-        <div class="window-body" id="modalBody"></div>
+
+        <div class="window-content">
+
+            <div class="memory-list">
+
+
+                <div class="memory-item">
+
+                    <h4>The Beginning</h4>
+
+                    <small>
+                        FILE 001
+                    </small>
+
+                    <div class="memory-content">
+
+                        We started as best friends, and somehow,
+                        five years later, we're still best friends,
+                        just with something a little more between us.
+
+                        Those five years never really felt like a
+                        distance between us. If anything, they gave
+                        us more time to grow closer, understand each
+                        other, and create something I never expected
+                        to have.
+
+                        I'm really grateful that somewhere along
+                        the way, my best friend became the person
+                        I get to love too.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>Our Conversations</h4>
+
+                    <small>
+                        FILE 002
+                    </small>
+
+                    <div class="memory-content">
+
+                        We used to think our conversations were cringe.
+
+                        Looking back now, I think we were right.
+
+                        WE ARE ACTUALLY CRINGE.
+
+                        And honestly, I wouldn't change it.
+
+                        I love how we can talk about the most random
+                        things, say things that make absolutely no
+                        sense, and somehow still have the best
+                        conversations.
+
+                        Our conversations might not always make
+                        sense to anyone else, but they make sense
+                        to us.
+
+                        And I love that.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Funny Moments</h4>
+
+                    <small>
+                        FILE 003
+                    </small>
+
+                    <div class="memory-content">
+
+                        There are so many funny moments between us
+                        that I don't think this database has enough
+                        storage.
+
+                        We tease each other a lot.
+                        We laugh a lot.
+                        We do stupid things a lot.
+
+                        Sometimes we are probably the only two
+                        people who find our jokes funny.
+
+                        But that's what makes them ours.
+
+                        I love all the chaos, all the stupid moments,
+                        all the laughing until we can't breathe,
+                        and all the memories that came from simply
+                        being ourselves together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Little Things</h4>
+
+                    <small>
+                        FILE 004
+                    </small>
+
+                    <div class="memory-content">
+
+                        I love everything about you.
+
+                        But sometimes, it's not the big things
+                        that stay with me.
+
+                        It's the little things you probably don't
+                        even realise you do.
+
+                        The way you talk, the way you react to
+                        things, the small habits you have, the little
+                        expressions you make, and all those tiny
+                        details that make you, you.
+
+                        Those things might seem insignificant to you.
+
+                        But to me, they're part of the reason I fell
+                        in love with you.
+
+                        I don't just love the big parts of who you are.
+
+                        I love the little parts too.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Difficult Days</h4>
+
+                    <small>
+                        FILE 005
+                    </small>
+
+                    <div class="memory-content">
+
+                        Not every day is going to be perfect.
+
+                        There will be difficult days, frustrating
+                        days, days where things don't go the way
+                        we want them to.
+
+                        But I want you to know that even on those
+                        days, I will keep choosing you.
+
+                        I want to be someone who supports you when
+                        things get hard, someone who listens when
+                        you need to talk, and someone who will always
+                        cheer for you, even when you don't feel like
+                        cheering for yourself.
+
+                        I don't expect every day to be easy.
+
+                        I just hope that whatever days come next,
+                        we get to face them together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>My Favourite Memory</h4>
+
+                    <small>
+                        FILE 006
+                    </small>
+
+                    <div class="memory-content">
+
+                        If you ask me what my favourite memory of us
+                        is right now, honestly, I'd probably say all
+                        the time we've spent together.
+
+                        But if I really have to choose one, I'd say
+                        our trip to Ipoh.
+
+                        I never thought I'd be going to your hometown
+                        together with your family, eating amazing
+                        food, exploring around, and just getting to
+                        experience that part of your life with you.
+
+                        It might have looked like just another trip,
+                        but it meant a lot to me.
+
+                        Getting to spend that time with you, being
+                        around your family, and creating those memories
+                        together is something I'll always remember.
+
+                        And honestly, I hope it's just one of many
+                        more trips we'll have together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>More To Come</h4>
+
+                    <small>
+                        FILE 007
+                    </small>
+
+                    <div class="memory-content">
+
+                        This file isn't finished.
+
+                        There are still so many places we haven't
+                        been, things we haven't done, birthdays we
+                        haven't celebrated, stupid jokes we haven't
+                        made, and memories we haven't created yet.
+
+                        So I'm leaving this database open.
+
+                        Because I want there to be a lot more to add.
+
+                        Stay tuned.
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     STATISTICS MODAL
+========================= -->
+
+<div class="modal" id="statsModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                RELATIONSHIP STATISTICS
+            </div>
+
+            <button class="close" onclick="closeModal('statsModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content">
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">MEMORIES CREATED</span>
+                    <span class="stat-value">∞</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">LAUGHS SHARED</span>
+                    <span class="stat-value">∞</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">STUPID 67 JOKES</span>
+                    <span class="stat-value">67+</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:87%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">ASU LEVEL</span>
+                    <span class="stat-value">MAX</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">QUALITY TIME</span>
+                    <span class="stat-value">99%</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:99%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">ADVENTURES</span>
+                    <span class="stat-value">LOADING</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:58%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">PHOTOS TOGETHER</span>
+                    <span class="stat-value">INCREASING</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:82%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">INSIDE JOKES</span>
+                    <span class="stat-value">TOO MANY</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">REASONS TO LOVE YOU</span>
+                    <span class="stat-value">UNCOUNTABLE</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">FUTURE MEMORIES</span>
+                    <span class="stat-value">PENDING</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:72%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-header">
+                    <span class="stat-name">RELATIONSHIP STATUS</span>
+                    <span class="stat-value">PERMANENT</span>
+                </div>
+
+                <div class="meter">
+                    <div class="meter-fill" style="width:100%"></div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FUTURE MODAL
+========================= -->
+
+<div class="modal" id="futureModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                FUTURE.EXE
+            </div>
+
+            <button class="close" onclick="closeModal('futureModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content future-terminal">
+
+            <p class="terminal-line">
+                &gt; ACCESSING FUTURE DATABASE...
+            </p>
+
+            <p class="terminal-line">
+                &gt; Searching possible futures...
+            </p>
+
+            <br>
+
+            <p class="check">
+                [✓] More dates
+            </p>
+
+            <p class="check">
+                [✓] More adventures
+            </p>
+
+            <p class="check">
+                [✓] More birthdays
+            </p>
+
+            <p class="check">
+                [✓] More stupid 67 jokes
+            </p>
+
+            <p class="check">
+                [✓] More asu
+            </p>
+
+            <p class="check">
+                [✓] More memories
+            </p>
+
+            <br>
+
+            <p class="terminal-line">
+                Running probability calculation...
+            </p>
+
+            <p>
+                Future birthdays together:
+            </p>
+
+            <div class="infinity">
+                ∞
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SECRET MODAL
+========================= -->
+
+<div class="modal" id="secretModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                SECRET FILE
+            </div>
+
+            <button class="close" onclick="closeModal('secretModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content">
+
+            <div class="secret-box">
+
+                <h2>
+                    ACCESS GRANTED ✓
+                </h2>
+
+                <p>
+                    You found the secret file.
+                </p>
+
+                <br>
+
+                <p>
+                    There's no secret boo hoo.
+                </p>
+
+                <p>
+                    I just wanted an excuse to tell you...
+                </p>
+
+                <br>
+
+                <p style="color: var(--green);">
+                    You're one of the best things that ever happened to me.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     LOVE LETTER MODAL
+========================= -->
+
+<div class="modal" id="letterModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                LOVE LETTER.TXT
+            </div>
+
+            <button class="close" onclick="closeModal('letterModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content">
+
+            <div class="letter">
+
+If you've made it this far, I guess the system has successfully revealed almost everything I wanted to say.
+
+But there are some things that probably don't belong in a database.
+
+I don't think I ever properly realised how much you would come to mean to me when we first became friends.
+
+You were just my best friend.
+
+Someone I could talk to, laugh with, annoy, make stupid jokes with, and spend hours doing absolutely nothing with.
+
+And somewhere along the way, you became so much more than that.
+
+You became someone I look forward to talking to.
+Someone whose happiness genuinely matters to me.
+Someone whose little habits I remember.
+Someone whose presence can make an ordinary day feel a little better.
+
+I love that we can be serious together and then immediately become the most unserious people alive.
+
+I love that we can laugh at the stupidest things.
+
+I love that we can be ourselves around each other.
+
+And I love that after all these years, you're still my best friend.
+
+That's probably one of the things I treasure most about us.
+
+I don't know exactly what the future is going to look like.
+
+I don't know where we'll be, what we'll be doing, or how many things will change along the way.
+
+But I know that I want to keep making memories with you.
+
+More trips.
+More birthdays.
+More random conversations.
+More stupid jokes.
+More asu.
+More moments that we'll look back on one day and laugh about.
+
+And when life gets difficult, I want to be there too.
+
+Not just for the good days, but for the days when everything feels a little heavier.
+
+I want to support you, believe in you, and remind you how capable you are whenever you forget.
+
+You don't have to be perfect around me.
+
+You don't have to have everything figured out.
+
+You can just be you.
+
+And somehow, that's always been more than enough for me.
+
+Thank you for being my best friend.
+Thank you for letting me be part of your life.
+And thank you for giving me so many memories that I know I'll carry with me for a very long time.
+
+Happy Birthday, sayang.
+
+I love you.
+
+                <div class="signature">
+                    — END OF MESSAGE —
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     BIRTHDAY QUIZ MODAL
+========================= -->
+
+<div class="modal" id="birthdayModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                BIRTHDAY.EXE
+            </div>
+
+            <button class="close" onclick="closeModal('birthdayModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content">
+
+            <div id="quizContainer">
+
+                <div class="quiz-progress" id="quizProgress">
+                    QUESTION 01 / 05
+                </div>
+
+                <div class="quiz-question" id="quizQuestion">
+                    Loading question...
+                </div>
+
+                <div class="quiz-options" id="quizOptions">
+                </div>
+
+                <div class="quiz-feedback" id="quizFeedback">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     LOVE MODAL
+========================= -->
+
+<div class="modal" id="loveModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                LOVE.EXE
+            </div>
+
+            <button class="close" onclick="closeModal('loveModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content love-error">
+
+            <p>
+                &gt; Attempting to terminate Love.exe...
+            </p>
+
+            <br>
+
+            <p class="green">
+                Stopping memories...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p class="green">
+                Removing Elu...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p class="green">
+                Removing love...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p>
+                CRITICAL ERROR
+            </p>
+
+            <br>
+
+            <p class="green">
+                Love.exe cannot be terminated.
+            </p>
+
+            <br>
+
+            <p>
+                Reason:
+            </p>
+
+            <p class="green">
+                We are one noww.
+            </p>
+
+            <br>
+
+            <p>
+                &gt;&gt;&gt; Program will continue indefinitely.
+            </p>
+
+        </div>
 
     </div>
 
@@ -651,925 +1664,386 @@
 
 <script>
 
-    /* ========================================================
-       BASIC HELPERS
-       ======================================================== */
-
-    const bootScreen = document.getElementById("bootScreen");
-    const bootLines = document.getElementById("bootLines");
-    const progress = document.getElementById("progress");
-    const bootButton = document.getElementById("bootButton");
-
-    const os = document.getElementById("os");
-
-    const modal = document.getElementById("modal");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalBody = document.getElementById("modalBody");
-    const closeModal = document.getElementById("closeModal");
-
-
-    function openWindow(title, content) {
-
-        modalTitle.textContent = title;
-        modalBody.innerHTML = content;
-
-        modal.classList.add("active");
-    }
-
-
-    function closeWindow() {
-
-        modal.classList.remove("active");
-
-    }
-
-
-    closeModal.addEventListener("click", closeWindow);
-
-
-    modal.addEventListener("click", function(event) {
-
-        if (event.target === modal) {
-            closeWindow();
-        }
-
-    });
-
-
-    /* ========================================================
+    /* =========================
        BOOT SEQUENCE
-       ======================================================== */
+    ========================= */
 
     const bootMessages = [
-        "Initializing ELU.EXE...",
-        "Loading relationship database...",
-        "Searching memories...",
-        "Loading happiness module...",
-        "Loading love module...",
-        "Checking boyfriend.exe...",
-        "Boyfriend.exe status: OBSESSED",
-        "Scanning birthday database...",
-        "Birthday detected.",
-        "Preparing surprise...",
-        "System ready. ❤️"
+        "> Initializing ELU.EXE...",
+        "> Loading memory database...",
+        "> Loading relationship statistics...",
+        "> Searching future possibilities...",
+        "> Loading important files...",
+        "> Checking love.exe...",
+        "> System integrity: PERFECT",
+        "> Personalization detected.",
+        "> Welcome back, sayang."
     ];
 
+    const bootText = document.getElementById("bootText");
+    const progressBar = document.getElementById("progressBar");
+    const enterButton = document.getElementById("enterButton");
 
     let bootIndex = 0;
-    let bootProgress = 0;
 
-
-    function bootStep() {
+    function bootSequence() {
 
         if (bootIndex < bootMessages.length) {
 
             const line = document.createElement("div");
 
-            line.textContent = "> " + bootMessages[bootIndex];
+            line.className = "boot-line";
 
-            bootLines.appendChild(line);
+            line.textContent = bootMessages[bootIndex];
+
+            bootText.appendChild(line);
 
             bootIndex++;
 
-            bootProgress += 100 / bootMessages.length;
+            progressBar.style.width =
+                ((bootIndex / bootMessages.length) * 100) + "%";
 
-            progress.style.width = bootProgress + "%";
-
-            setTimeout(bootStep, 450);
+            setTimeout(bootSequence, 450);
 
         } else {
 
-            bootButton.style.display = "inline-block";
+            setTimeout(() => {
+
+                enterButton.style.display = "block";
+
+            }, 500);
 
         }
 
     }
 
+    bootSequence();
 
-    bootStep();
 
+    enterButton.addEventListener("click", () => {
 
-    bootButton.addEventListener("click", function() {
+        document.getElementById("bootScreen").style.display = "none";
 
-        bootScreen.style.display = "none";
-        os.style.display = "block";
+        document.getElementById("mainSystem").style.display = "block";
+
+        window.scrollTo(0, 0);
 
     });
 
 
-    /* ========================================================
-       ELU SCAN
-       ======================================================== */
+    /* =========================
+       MODALS
+    ========================= */
 
-    function showScan() {
+    function openModal(id) {
 
-        openWindow(
-            "ELU.EXE — Personality Scan",
+        document.getElementById(id).classList.add("active");
 
-            `
-            <div class="terminal">
-
-                <div class="pink">> RUNNING ELU.EXE...</div>
-
-                <br>
-
-                <div>> Scanning smile...</div>
-
-                <div class="green">
-                    RESULT: Makes boyfriend.exe happy. ❤️
-                </div>
-
-                <br>
-
-                <div>> Scanning eyes...</div>
-
-                <div class="green">
-                    RESULT: Boyfriend.exe has stopped responding.
-                </div>
-
-                <br>
-
-                <div>> Scanning hair...</div>
-
-                <div class="green">
-                    RESULT: Luscious. System distracted.
-                </div>
-
-                <br>
-
-                <div>> Scanning personality...</div>
-
-                <div class="green">
-                    RESULT: Somehow even better than expected.
-                </div>
-
-                <br>
-
-                <div>> Scanning heart...</div>
-
-                <div class="green">
-                    RESULT: Too soft for this world. ❤️
-                </div>
-
-                <br>
-
-                <div class="yellow">
-                    FINAL RESULT:
-                </div>
-
-                <div class="pink">
-                    ELU.EXE IS IRREPLACEABLE.
-                </div>
-
-            </div>
-            `
-        );
+        document.body.style.overflow = "hidden";
 
     }
 
 
-    /* ========================================================
+    function closeModal(id) {
+
+        document.getElementById(id).classList.remove("active");
+
+        document.body.style.overflow = "";
+
+    }
+
+
+    document.querySelectorAll(".modal").forEach(modal => {
+
+        modal.addEventListener("click", function(event) {
+
+            if (event.target === modal) {
+
+                modal.classList.remove("active");
+
+                document.body.style.overflow = "";
+
+            }
+
+        });
+
+    });
+
+
+    document.addEventListener("keydown", function(event) {
+
+        if (event.key === "Escape") {
+
+            document.querySelectorAll(".modal").forEach(modal => {
+
+                modal.classList.remove("active");
+
+            });
+
+            document.body.style.overflow = "";
+
+        }
+
+    });
+
+
+    /* =========================
        MEMORY DATABASE
-       ======================================================== */
+    ========================= */
 
-    const memories = [
+    document.querySelectorAll(".memory-item").forEach(item => {
+
+        item.addEventListener("click", () => {
+
+            item.classList.toggle("open");
+
+        });
+
+    });
+
+
+    /* =========================
+       BIRTHDAY QUIZ
+    ========================= */
+
+    const quizQuestions = [
 
         {
-            title: "The Beginning",
-            text: "This is where everything started. And somehow, it eventually became us. ❤️"
+            question:
+                "Where did we go together that became one of my favourite memories?",
+
+            options: [
+                "Kuala Lumpur",
+                "Ipoh",
+                "Penang",
+                "Melaka"
+            ],
+
+            answer: 1
         },
 
         {
-            title: "Our Conversations",
-            text: "Some conversations lasted way longer than they needed to... but I wouldn't change them."
+            question:
+                "What is one of our most ridiculous inside jokes?",
+
+            options: [
+                "67",
+                "Asu",
+                "Both",
+                "Classified"
+            ],
+
+            answer: 2
         },
 
         {
-            title: "The Funny Moments",
-            text: "There are probably enough stupid moments between us to fill an entire database. 😂"
+            question:
+                "What were we before we became something more?",
+
+            options: [
+                "Strangers",
+                "Classmates",
+                "Best friends",
+                "Enemies"
+            ],
+
+            answer: 2
         },
 
         {
-            title: "The Little Things",
-            text: "The small things you probably don't even realise you do are some of the things I love most."
+            question:
+                "What do I think makes our relationship special?",
+
+            options: [
+                "We never argue",
+                "We can always be ourselves",
+                "We are completely normal",
+                "We never do stupid things"
+            ],
+
+            answer: 1
         },
 
         {
-            title: "The Difficult Days",
-            text: "Not every day is perfect. But I'm grateful that even on difficult days, we keep choosing each other."
-        },
+            question:
+                "How many future memories do I want us to make?",
 
-        {
-            title: "My Favourite Memory",
-            text: "You can replace this text with your actual favourite memory together. This one is reserved just for that."
-        },
+            options: [
+                "A few",
+                "100",
+                "As many as possible",
+                "∞"
+            ],
 
-        {
-            title: "More To Come",
-            text: "This file isn't finished. There are still so many memories we haven't made yet."
-        },
-
-        {
-            title: "Future Memory",
-            text: "STATUS: LOCKED 🔒 — Come back later. We haven't created this memory yet."
+            answer: 3
         }
 
     ];
 
 
-    function showMemories() {
+    let currentQuestion = 0;
+    let quizScore = 0;
+    let answered = false;
 
-        let html = `
-            <p class="muted">
-                Select a memory file to open it.
-            </p>
 
-            <div class="memory-grid">
-        `;
+    function loadQuestion() {
 
-        memories.forEach((memory, index) => {
+        answered = false;
 
-            html += `
-                <div class="memory" data-memory="${index}">
+        const question = quizQuestions[currentQuestion];
 
-                    <div class="memory-number">
-                        MEMORY_${String(index + 1).padStart(3, "0")}
-                    </div>
+        document.getElementById("quizProgress").textContent =
+            "QUESTION " +
+            String(currentQuestion + 1).padStart(2, "0") +
+            " / " +
+            String(quizQuestions.length).padStart(2, "0");
 
-                    <div class="memory-title">
-                        ${memory.title}
-                    </div>
 
-                </div>
-            `;
+        document.getElementById("quizQuestion").textContent =
+            question.question;
 
-        });
 
-        html += `</div>`;
+        const optionsContainer =
+            document.getElementById("quizOptions");
 
-        openWindow("Memory Database", html);
+        optionsContainer.innerHTML = "";
 
-        document.querySelectorAll("[data-memory]").forEach(card => {
 
-            card.addEventListener("click", function() {
+        document.getElementById("quizFeedback").textContent = "";
 
-                const memory = memories[this.dataset.memory];
 
-                openWindow(
+        question.options.forEach((option, index) => {
 
-                    "Memory Database — " + memory.title,
+            const button = document.createElement("button");
 
-                    `
-                    <div class="terminal">
+            button.className = "quiz-option";
 
-                        <div class="pink">
-                            MEMORY FILE OPENED ✓
-                        </div>
+            button.textContent = option;
 
-                        <br>
+            button.addEventListener("click", () => {
 
-                        <div>
-                            ${memory.text}
-                        </div>
-
-                    </div>
-                    `
-
-                );
+                answerQuestion(index);
 
             });
 
+            optionsContainer.appendChild(button);
+
         });
 
     }
 
 
-    /* ========================================================
-       RELATIONSHIP STATISTICS
-       ======================================================== */
+    function answerQuestion(selected) {
 
-    function showStats() {
+        if (answered) {
+            return;
+        }
 
-        openWindow(
+        answered = true;
 
-            "Relationship Statistics",
+        const question = quizQuestions[currentQuestion];
 
-            `
-            <div class="stat">
-
-                <div class="stat-header">
-                    <span>Love</span>
-                    <span class="stat-value">∞%</span>
-                </div>
-
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width:100%"></div>
-                </div>
-
-            </div>
+        const buttons =
+            document.querySelectorAll(".quiz-option");
 
 
-            <div class="stat">
+        if (selected === question.answer) {
 
-                <div class="stat-header">
-                    <span>Memories</span>
-                    <span class="stat-value">999+</span>
-                </div>
+            buttons[selected].classList.add("correct");
 
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width:95%"></div>
-                </div>
+            quizScore++;
 
-            </div>
+            document.getElementById("quizFeedback").textContent =
+                "✓ CORRECT. Memory unlocked.";
 
+        } else {
 
-            <div class="stat">
+            buttons[selected].classList.add("wrong");
 
-                <div class="stat-header">
-                    <span>Reasons to Smile</span>
-                    <span class="stat-value">∞</span>
-                </div>
+            buttons[question.answer].classList.add("correct");
 
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width:100%"></div>
-                </div>
+            document.getElementById("quizFeedback").textContent =
+                "Not quite. The correct answer has been revealed.";
 
-            </div>
+        }
 
 
-            <div class="stat">
+        setTimeout(() => {
 
-                <div class="stat-header">
-                    <span>Cuteness</span>
-                    <span class="stat-value">ERROR</span>
-                </div>
+            currentQuestion++;
 
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width:100%"></div>
-                </div>
+            if (currentQuestion < quizQuestions.length) {
 
-            </div>
+                loadQuestion();
 
+            } else {
 
-            <div class="terminal">
+                showQuizResult();
 
-                <div>> Arguments survived: MANY</div>
-                <div>> Times missed: TOO MANY</div>
-                <div>> Future adventures: INFINITE</div>
-                <div class="pink">> Relationship status: STILL US ❤️</div>
+            }
 
-            </div>
-            `
-
-        );
+        }, 1300);
 
     }
 
 
-    /* ========================================================
-       FUTURE.EXE
-       ======================================================== */
+    function showQuizResult() {
 
-    function showFuture() {
-
-        openWindow(
-
-            "Future.exe",
-
-            `
-            <div class="terminal">
-
-                <div class="pink">
-                    > ACCESSING FUTURE DATABASE...
-                </div>
-
-                <br>
-
-                <div>> Searching possible futures...</div>
-
-                <br>
-
-                <div>
-                    [✓] More dates
-                </div>
-
-                <div>
-                    [✓] More adventures
-                </div>
-
-                <div>
-                    [✓] More birthdays
-                </div>
-
-                <div>
-                    [✓] More stupid jokes
-                </div>
-
-                <div>
-                    [✓] More random arguments 😂
-                </div>
-
-                <div>
-                    [✓] More memories
-                </div>
-
-                <br>
-
-                <div class="yellow">
-                    Running probability calculation...
-                </div>
-
-                <br>
-
-                <div>
-                    Future birthdays together:
-                </div>
-
-                <div class="infinity">
-                    ∞
-                </div>
-
-                <div class="pink">
-                    Prediction:
-                    Hopefully, a lot more.
-                </div>
-
-            </div>
-            `
-
-        );
-
-    }
+        const container =
+            document.getElementById("quizContainer");
 
 
-    /* ========================================================
-       SECRET FILE
-       ======================================================== */
+        container.innerHTML = `
 
-    function showSecret() {
+            <div class="quiz-result">
 
-        openWindow(
-
-            "🔐 SECRET FILE",
-
-            `
-            <div>
+                <h2>
+                    BIRTHDAY PROTOCOL COMPLETE
+                </h2>
 
                 <p>
-                    This file is protected.
+                    Relationship knowledge:
+                </p>
+
+                <div class="big">
+                    ${quizScore}/${quizQuestions.length}
+                </div>
+
+                <p>
+                    System analysis complete.
+                </p>
+
+                <br>
+
+                <p class="muted">
+                    Compatibility level: MAXIMUM
                 </p>
 
                 <p class="muted">
-                    Hint: Enter the name of the person this
-                    entire program was created for.
+                    Memories unlocked: ALL
                 </p>
 
-                <input
-                    id="secretInput"
-                    class="secret-input"
-                    type="text"
-                    placeholder="Enter password..."
-                >
+                <br>
 
-                <button
-                    id="secretButton"
-                    class="secret-button"
-                >
-                    UNLOCK
-                </button>
+                <p style="color: var(--green);">
+                    You've successfully completed the test.
+                </p>
 
-                <div id="secretResult"></div>
+                <br>
+
+                <p>
+                    There is nothing else to calculate.
+                    You already know the important part.
+                </p>
 
             </div>
-            `
 
-        );
-
-
-        document
-            .getElementById("secretButton")
-            .addEventListener("click", function() {
-
-                const value =
-                    document
-                    .getElementById("secretInput")
-                    .value
-                    .trim()
-                    .toLowerCase();
-
-                const result =
-                    document.getElementById("secretResult");
-
-
-                if (value === "elu") {
-
-                    result.innerHTML = `
-                        <div class="terminal">
-
-                            <div class="green">
-                                ACCESS GRANTED ✓
-                            </div>
-
-                            <br>
-
-                            <div>
-                                You found the secret file.
-                            </div>
-
-                            <br>
-
-                            <div>
-                                I don't really have a secret.
-                            </div>
-
-                            <div>
-                                I just wanted an excuse to tell you...
-                            </div>
-
-                            <br>
-
-                            <div class="pink">
-                                You're one of the best things
-                                that ever happened to me. ❤️
-                            </div>
-
-                        </div>
-                    `;
-
-                } else {
-
-                    result.innerHTML = `
-                        <div class="yellow">
-                            ACCESS DENIED.
-                        </div>
-
-                        <br>
-
-                        <div class="muted">
-                            Hint: It's literally your name. 😂
-                        </div>
-                    `;
-
-                }
-
-            });
+        `;
 
     }
 
 
-    /* ========================================================
-       LOVE LETTER
-       ======================================================== */
-
-    function showLetter() {
-
-        openWindow(
-
-            "💌 Love Letter",
-
-            `
-            <div class="letter">
-
-                <p>
-                    But honestly...
-                </p>
-
-                <p>
-                    One of the things I love most about you
-                    is your <strong>soft heart.</strong>
-                </p>
-
-                <p>
-                    You're someone who cares deeply,
-                    and I hope you never lose that part of yourself.
-                </p>
-
-                <p>
-                    I hope you keep smiling.<br>
-                    I hope you keep laughing.<br>
-                    I hope you keep being the Elu that I know and love.
-                </p>
-
-                <p>
-                    And most importantly...
-                </p>
-
-                <p>
-                    I hope you keep being happy.
-                </p>
-
-                <p>
-                    I hope you achieve every dream you have,
-                    even the ones you haven't told me about yet.
-                </p>
-
-                <p>
-                    And whenever life gets difficult,
-                    I hope you remember that you don't have to
-                    figure everything out alone.
-                </p>
-
-                <p>
-                    <strong>I'll be here.</strong>
-                </p>
-
-                <p>
-                    Happy Birthday, Elu. ❤️
-                </p>
-
-            </div>
-            `
-
-        );
-
-    }
-
-
-    /* ========================================================
-       BIRTHDAY
-       ======================================================== */
-
-    function showBirthday() {
-
-        openWindow(
-
-            "🎂 Birthday.exe",
-
-            `
-            <div class="birthday">
-
-                <div class="heart">
-                    ❤️
-                </div>
-
-                <h1>
-                    Happy Birthday, Elu!
-                </h1>
-
-                <p>
-                    You've reached the final birthday protocol.
-                </p>
-
-                <p>
-                    But before we finish...
-                </p>
-
-                <button
-                    id="revealButton"
-                    class="terminal-button"
-                >
-                    EXECUTE FINAL MESSAGE
-                </button>
-
-                <div id="birthdayReveal"></div>
-
-            </div>
-            `
-
-        );
-
-
-        document
-            .getElementById("revealButton")
-            .addEventListener("click", function() {
-
-                document
-                    .getElementById("birthdayReveal")
-                    .innerHTML = `
-
-                    <div class="terminal" style="text-align:left;margin-top:30px">
-
-                        <div class="pink">
-                            FINAL SYSTEM ANALYSIS
-                        </div>
-
-                        <br>
-
-                        <div>
-                            Memories together: INCREASING
-                        </div>
-
-                        <div>
-                            Reasons to smile: INCREASING
-                        </div>
-
-                        <div>
-                            Reasons I love you: INCREASING
-                        </div>
-
-                        <div>
-                            Future adventures: HOPEFULLY INFINITE
-                        </div>
-
-                        <br>
-
-                        <div>
-                            Love level:
-                        </div>
-
-                        <div class="infinity">
-                            ∞
-                        </div>
-
-                        <div class="pink">
-                            No upper limit detected.
-                        </div>
-
-                        <br>
-
-                        <div>
-                            Thank you for being part of my life.
-                        </div>
-
-                        <br>
-
-                        <div>
-                            Thank you for all the memories.
-                        </div>
-
-                        <br>
-
-                        <div>
-                            And thank you for being you.
-                        </div>
-
-                        <br>
-
-                        <div>
-                            I hope this is only the beginning
-                            of many more birthdays we get to
-                            celebrate together.
-                        </div>
-
-                        <br>
-
-                        <div class="pink">
-                            I love you. ❤️
-                        </div>
-
-                        <br>
-
-                        <div class="green">
-                            >>> birthday.py completed successfully.
-                        </div>
-
-                        <div class="green">
-                            >>> New memories will continue to be added.
-                        </div>
-
-                        <div class="green">
-                            >>> Program will never terminate. ❤️
-                        </div>
-
-                    </div>
-                `;
-
-            });
-
-    }
-
-
-    /* ========================================================
-       LOVE.EXE
-       ======================================================== */
-
-    function showTerminate() {
-
-        openWindow(
-
-            "❤️ Love.exe",
-
-            `
-            <div class="terminal">
-
-                <div>
-                    > Attempting to terminate Love.exe...
-                </div>
-
-                <br>
-
-                <div>
-                    Stopping memories...
-                </div>
-
-                <div>
-                    FAILED.
-                </div>
-
-                <br>
-
-                <div>
-                    Removing Elu...
-                </div>
-
-                <div>
-                    FAILED.
-                </div>
-
-                <br>
-
-                <div>
-                    Removing love...
-                </div>
-
-                <div>
-                    FAILED.
-                </div>
-
-                <br>
-
-                <div class="yellow">
-                    CRITICAL ERROR
-                </div>
-
-                <br>
-
-                <div class="pink">
-                    Love.exe cannot be terminated.
-                </div>
-
-                <br>
-
-                <div>
-                    Reason:
-                </div>
-
-                <div>
-                    You're stuck with me. 😂❤️
-                </div>
-
-                <br>
-
-                <div class="green">
-                    >>> Program will continue indefinitely.
-                </div>
-
-            </div>
-            `
-
-        );
-
-    }
-
-
-    /* ========================================================
-       APP BUTTONS
-       ======================================================== */
-
-    document.querySelectorAll("[data-app]").forEach(button => {
-
-        button.addEventListener("click", function() {
-
-            const app = this.dataset.app;
-
-            if (app === "scan") {
-                showScan();
-            }
-
-            if (app === "memories") {
-                showMemories();
-            }
-
-            if (app === "stats") {
-                showStats();
-            }
-
-            if (app === "future") {
-                showFuture();
-            }
-
-            if (app === "secret") {
-                showSecret();
-            }
-
-            if (app === "letter") {
-                showLetter();
-            }
-
-            if (app === "birthday") {
-                showBirthday();
-            }
-
-            if (app === "terminate") {
-                showTerminate();
-            }
-
-        });
-
-    });
-
-
-    /* ========================================================
-       ESCAPE KEY
-       ======================================================== */
-
-    document.addEventListener("keydown", function(event) {
-
-        if (event.key === "Escape") {
-            closeWindow();
-        }
-
-    });
+    loadQuestion();
 
 </script>
 
