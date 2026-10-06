@@ -1,12 +1,18 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>ELU.EXE</title>
 
 <style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
     :root {
         --green: #39ff88;
         --green-dark: #0f8f4f;
@@ -21,17 +27,16 @@
         --danger: #ff5555;
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
+    html,
     body {
+        width: 100%;
+        min-height: 100%;
         background: var(--black);
         color: var(--text);
         font-family: "Courier New", monospace;
-        min-height: 100vh;
+    }
+
+    body {
         overflow-x: hidden;
     }
 
@@ -40,16 +45,18 @@
         font-family: inherit;
     }
 
-    /* BOOT SCREEN */
+    /* =========================
+       BOOT SCREEN
+    ========================= */
 
     #bootScreen {
         position: fixed;
         inset: 0;
-        background: var(--black);
+        background: #020402;
+        z-index: 9999;
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 9999;
         padding: 20px;
     }
 
@@ -60,187 +67,242 @@
 
     .boot-title {
         color: var(--green);
-        font-size: clamp(42px, 10vw, 80px);
+        font-size: clamp(32px, 10vw, 72px);
         font-weight: bold;
+        text-align: center;
         text-shadow: 0 0 15px rgba(57, 255, 136, 0.5);
-        margin-bottom: 5px;
+        margin-bottom: 10px;
+        letter-spacing: 4px;
     }
 
     .boot-subtitle {
-        color: var(--green-soft);
-        margin-bottom: 30px;
-        font-size: 14px;
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 40px;
+        font-size: 13px;
     }
 
-    .boot-log {
-        color: var(--green);
+    #bootText {
+        min-height: 180px;
+        font-size: 13px;
         line-height: 1.8;
-        font-size: 14px;
-        margin-bottom: 25px;
+        color: var(--green-soft);
+    }
+
+    .boot-line {
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+    }
+
+    .progress-wrapper {
+        width: 100%;
+        height: 12px;
+        border: 1px solid var(--border);
+        margin-top: 20px;
+        padding: 2px;
     }
 
     .progress-bar {
-        width: 100%;
-        height: 14px;
-        border: 1px solid var(--green-dark);
-        margin-bottom: 25px;
-    }
-
-    .progress-fill {
-        width: 0%;
         height: 100%;
+        width: 0%;
         background: var(--green);
         box-shadow: 0 0 10px rgba(57, 255, 136, 0.5);
-        transition: width 0.1s linear;
+        transition: width 0.2s;
     }
 
-    .enter-button {
+    #enterButton {
+        display: none;
+        width: 100%;
+        margin-top: 30px;
+        padding: 15px;
         background: transparent;
-        color: var(--green);
         border: 1px solid var(--green);
-        padding: 12px 20px;
+        color: var(--green);
         cursor: pointer;
-        font-size: 14px;
+        font-size: 15px;
         transition: 0.2s;
     }
 
-    .enter-button:hover {
+    #enterButton:hover,
+    #enterButton:active {
         background: var(--green);
-        color: var(--black);
+        color: #020402;
+        box-shadow: 0 0 20px rgba(57, 255, 136, 0.35);
     }
 
-    /* MAIN */
+    /* =========================
+       MAIN SYSTEM
+    ========================= */
 
-    #mainApp {
+    #mainSystem {
         display: none;
         min-height: 100vh;
+        background:
+            radial-gradient(circle at top, rgba(20, 90, 50, 0.12), transparent 40%),
+            var(--black);
     }
 
-    .container {
-        width: min(1100px, 92%);
-        margin: auto;
-        padding: 40px 0 60px;
-    }
-
-    .top-bar {
+    .topbar {
         border-bottom: 1px solid var(--border);
-        padding-bottom: 15px;
-        margin-bottom: 35px;
+        padding: 16px 20px;
         display: flex;
         justify-content: space-between;
-        gap: 20px;
-        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(5, 8, 5, 0.95);
+        backdrop-filter: blur(8px);
     }
 
     .system-name {
         color: var(--green);
         font-weight: bold;
+        letter-spacing: 2px;
+        font-size: 15px;
     }
 
     .system-status {
         color: var(--muted);
-        font-size: 13px;
+        font-size: 11px;
+    }
+
+    .system-status span {
+        color: var(--green);
     }
 
     .welcome {
-        margin-bottom: 40px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 45px 20px 20px;
     }
 
     .welcome h1 {
         color: var(--green);
-        font-size: clamp(28px, 5vw, 42px);
-        margin-bottom: 18px;
-        text-shadow: 0 0 10px rgba(57, 255, 136, 0.25);
+        font-size: clamp(26px, 7vw, 42px);
+        margin-bottom: 12px;
     }
 
     .welcome p {
-        max-width: 800px;
+        max-width: 700px;
+        color: var(--muted);
         line-height: 1.8;
-        color: var(--text);
-        font-size: 14px;
+        font-size: 13px;
     }
 
-    /* APP GRID */
+    /* =========================
+       APP GRID
+       3 COLUMNS x 2 ROWS
+    ========================= */
 
-    .app-grid {
+    .apps {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 25px 20px 50px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 15px;
     }
 
-    .app-card {
+    .app {
+        min-height: 130px;
         border: 1px solid var(--border);
-        background: var(--panel);
-        padding: 22px;
+        background: linear-gradient(
+            145deg,
+            rgba(13, 24, 15, 0.95),
+            rgba(6, 12, 7, 0.95)
+        );
+        padding: 18px;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
         transition: 0.2s;
-        min-height: 160px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
     }
 
-    .app-card:hover {
+    .app::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(57, 255, 136, 0.06),
+            transparent
+        );
+        transform: translateX(-100%);
+        transition: 0.4s;
+    }
+
+    .app:hover::before {
+        transform: translateX(100%);
+    }
+
+    .app:hover,
+    .app:active {
         border-color: var(--green);
-        background: var(--panel-light);
         transform: translateY(-2px);
-        box-shadow: 0 0 15px rgba(57, 255, 136, 0.08);
+        box-shadow: 0 0 18px rgba(57, 255, 136, 0.12);
     }
 
     .app-number {
         color: var(--muted);
-        font-size: 12px;
-        margin-bottom: 10px;
+        font-size: 10px;
+        margin-bottom: 15px;
     }
 
-    .app-title {
+    .app h3 {
         color: var(--green);
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 12px;
+        font-size: 15px;
+        margin-bottom: 8px;
     }
 
-    .app-description {
+    .app p {
         color: var(--muted);
-        font-size: 12px;
-        line-height: 1.6;
+        font-size: 11px;
+        line-height: 1.5;
     }
 
-    .app-arrow {
-        color: var(--green-dark);
-        margin-top: 18px;
-        font-size: 12px;
-    }
-
-    /* MODALS */
+    /* =========================
+       MODAL
+    ========================= */
 
     .modal {
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.82);
+        z-index: 500;
         display: none;
         justify-content: center;
         align-items: center;
-        z-index: 5000;
-        padding: 20px;
+        padding: 15px;
+    }
+
+    .modal.active {
+        display: flex;
     }
 
     .window {
-        width: min(850px, 100%);
+        width: 100%;
+        max-width: 800px;
         max-height: 90vh;
         overflow-y: auto;
         background: var(--panel);
-        border: 1px solid var(--green-dark);
-        box-shadow: 0 0 30px rgba(57, 255, 136, 0.1);
+        border: 1px solid var(--green);
+        box-shadow: 0 0 30px rgba(57, 255, 136, 0.15);
+        animation: windowOpen 0.2s ease-out;
     }
 
     .window-header {
+        position: sticky;
+        top: 0;
+        background: #071008;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid var(--border);
-        padding: 12px 15px;
-        background: var(--panel-light);
+        z-index: 5;
     }
 
     .window-title {
@@ -250,283 +312,422 @@
     }
 
     .close {
-        color: var(--muted);
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--green);
+        width: 30px;
+        height: 30px;
         cursor: pointer;
-        font-size: 18px;
-        border: none;
-        background: none;
     }
 
     .close:hover {
-        color: var(--green);
+        background: var(--green);
+        color: #000;
     }
 
     .window-content {
-        padding: 25px;
+        padding: 22px;
         line-height: 1.8;
-        font-size: 14px;
+        font-size: 13px;
     }
 
-    /* LOCK SCREEN */
+    .window-content p {
+        margin-bottom: 18px;
+    }
+
+    .terminal-line {
+        color: var(--green);
+        margin-bottom: 6px;
+    }
+
+    .muted {
+        color: var(--muted);
+    }
+
+    /* =========================
+       LOCKED FILES
+    ========================= */
 
     .lock-screen {
-        text-align: left;
+        line-height: 2;
     }
 
     .lock-line {
-        color: var(--muted);
-        margin-bottom: 10px;
+        color: var(--green);
+        margin-bottom: 8px;
     }
 
     .lock-question {
-        color: var(--green);
+        color: var(--text);
         margin: 20px 0 12px;
     }
 
     .lock-input {
         width: 100%;
-        background: var(--black);
+        background: #020402;
         border: 1px solid var(--border);
         color: var(--green);
-        padding: 12px;
+        padding: 13px;
         outline: none;
-        font-size: 14px;
+        font-size: 13px;
+        margin-bottom: 12px;
     }
 
     .lock-input:focus {
         border-color: var(--green);
-        box-shadow: 0 0 8px rgba(57, 255, 136, 0.1);
+        box-shadow: 0 0 12px rgba(57, 255, 136, 0.12);
     }
 
     .lock-button {
-        margin-top: 12px;
+        width: 100%;
         background: transparent;
         border: 1px solid var(--green);
         color: var(--green);
-        padding: 10px 15px;
+        padding: 13px;
         cursor: pointer;
+        font-size: 12px;
+        transition: 0.2s;
     }
 
-    .lock-button:hover {
+    .lock-button:hover,
+    .lock-button:active {
         background: var(--green);
-        color: var(--black);
+        color: #020402;
     }
 
     .lock-feedback {
+        min-height: 25px;
         margin-top: 15px;
         color: var(--danger);
-        min-height: 20px;
     }
 
     .lock-feedback.success {
         color: var(--green);
     }
 
-    /* CONTENT */
+    /* =========================
+       MEMORIES
+    ========================= */
 
-    .content-section {
-        margin-bottom: 30px;
-    }
-
-    .content-section h3 {
-        color: var(--green);
-        margin-bottom: 10px;
+    .memory-list {
+        display: grid;
+        gap: 12px;
     }
 
     .memory-item {
-        border-left: 2px solid var(--green-dark);
-        padding-left: 15px;
-        margin-bottom: 22px;
-    }
-
-    .memory-item strong {
-        color: var(--green);
-    }
-
-    .future-item {
         border: 1px solid var(--border);
         padding: 15px;
-        margin-bottom: 15px;
-    }
-
-    .future-item strong {
-        color: var(--green);
-    }
-
-    .love-letter {
-        white-space: pre-line;
-        color: var(--text);
-    }
-
-    .love-final {
-        color: var(--green);
-        font-size: 20px;
-        margin-top: 25px;
-    }
-
-    /* BIRTHDAY GAME */
-
-    .birthday-intro {
-        line-height: 1.8;
-        color: var(--text);
-    }
-
-    .birthday-start {
-        margin-top: 20px;
-        background: transparent;
-        border: 1px solid var(--green);
-        color: var(--green);
-        padding: 12px 18px;
         cursor: pointer;
+        transition: 0.2s;
     }
 
-    .birthday-start:hover {
-        background: var(--green);
-        color: var(--black);
+    .memory-item:hover {
+        border-color: var(--green);
+        background: rgba(57, 255, 136, 0.04);
     }
 
-    .game-container {
-        display: none;
-    }
-
-    .game-status {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-        flex-wrap: wrap;
+    .memory-item h4 {
         color: var(--green);
-        border: 1px solid var(--border);
-        padding: 12px 15px;
-        margin-bottom: 12px;
-        font-size: 13px;
+        margin-bottom: 5px;
     }
 
-    .game-area {
-        position: relative;
-        width: 100%;
-        height: 360px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        background:
-            linear-gradient(rgba(57, 255, 136, 0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(57, 255, 136, 0.025) 1px, transparent 1px),
-            var(--black);
-        background-size: 25px 25px;
-        touch-action: none;
-        user-select: none;
-    }
-
-    .game-message {
+    .memory-item small {
         color: var(--muted);
-        text-align: center;
-        padding: 18px 0;
-        font-size: 12px;
     }
 
-    .heart {
-        position: absolute;
-        color: var(--green);
-        font-size: 25px;
-        line-height: 1;
-        cursor: pointer;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: none;
-        text-shadow: 0 0 8px rgba(57, 255, 136, 0.5);
-        z-index: 2;
-    }
-
-    .heart:hover {
-        color: var(--green-soft);
-    }
-
-    .birthday-result {
+    .memory-content {
         display: none;
-        text-align: left;
-        line-height: 1.9;
-    }
-
-    .birthday-result .complete {
-        color: var(--green);
-        font-weight: bold;
-    }
-
-    .birthday-result .big-love {
-        color: var(--green);
-        font-size: 28px;
-        margin-top: 18px;
-    }
-
-    .play-again {
-        margin-top: 20px;
-        background: transparent;
-        border: 1px solid var(--green);
-        color: var(--green);
-        padding: 10px 15px;
-        cursor: pointer;
-    }
-
-    .play-again:hover {
-        background: var(--green);
-        color: var(--black);
-    }
-
-    /* LOVE.EXE */
-
-    .termination {
-        text-align: center;
-        padding: 20px 0;
-    }
-
-    .termination-title {
-        color: var(--green);
-        font-size: clamp(28px, 6vw, 50px);
-        margin-bottom: 25px;
-    }
-
-    .termination-text {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed var(--border);
         color: var(--text);
+        line-height: 1.8;
+    }
+
+    .memory-item.open .memory-content {
+        display: block;
+    }
+
+    /* =========================
+       FUTURE
+    ========================= */
+
+    .future-terminal {
         line-height: 2;
     }
 
-    .infinity {
+    .future-terminal .check {
         color: var(--green);
-        font-size: 45px;
-        margin-top: 20px;
     }
 
-    /* RESPONSIVE */
+    .infinity {
+        font-size: 45px;
+        color: var(--green);
+        text-align: center;
+        margin-top: 15px;
+        text-shadow: 0 0 15px rgba(57, 255, 136, 0.35);
+    }
+
+    /* =========================
+       SECRET FILE
+    ========================= */
+
+    .secret-box {
+        border: 1px dashed var(--green);
+        padding: 25px;
+        text-align: center;
+    }
+
+    .secret-box h2 {
+        color: var(--green);
+        margin-bottom: 20px;
+    }
+
+    /* =========================
+       LOVE LETTER
+    ========================= */
+
+    .letter {
+        line-height: 2;
+        white-space: pre-line;
+    }
+
+    .letter .signature {
+        color: var(--green);
+        margin-top: 25px;
+    }
+
+    /* =========================
+   BIRTHDAY GAME
+========================= */
+
+.birthday-intro {
+    line-height: 1.8;
+}
+
+.birthday-start {
+    width: 100%;
+    margin-top: 20px;
+    padding: 13px;
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.birthday-start:hover,
+.birthday-start:active {
+    background: var(--green);
+    color: #020402;
+}
+
+.game-container {
+    display: none;
+}
+
+.game-status {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--green);
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 11px;
+}
+
+.game-area {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background:
+        linear-gradient(
+            rgba(57, 255, 136, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(57, 255, 136, 0.025) 1px,
+            transparent 1px
+        ),
+        #020402;
+    background-size: 25px 25px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.game-message {
+    color: var(--muted);
+    text-align: center;
+    padding: 15px 0 0;
+    font-size: 10px;
+}
+
+.heart {
+    position: absolute;
+    color: var(--green);
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    text-shadow: 0 0 8px rgba(57, 255, 136, 0.5);
+}
+
+.heart:hover {
+    color: var(--green-soft);
+}
+
+.birthday-result {
+    display: none;
+    line-height: 1.8;
+}
+
+.birthday-result .complete {
+    color: var(--green);
+}
+
+.birthday-result .big-love {
+    font-size: 45px;
+    color: var(--green);
+    text-align: center;
+    margin: 15px 0;
+}
+
+.play-again {
+    width: 100%;
+    margin-top: 15px;
+    padding: 13px;
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.play-again:hover,
+.play-again:active {
+    background: var(--green);
+    color: #020402;
+}
+
+@media (max-width: 500px) {
+
+    .game-area {
+        height: 320px;
+    }
+
+    .heart {
+        font-size: 23px;
+    }
+
+}
+
+    /* =========================
+       LOVE.EXE
+    ========================= */
+
+    .love-error {
+        color: var(--danger);
+        line-height: 2;
+    }
+
+    .love-error .green {
+        color: var(--green);
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .footer {
+        border-top: 1px solid var(--border);
+        text-align: center;
+        padding: 25px 20px;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    /* =========================
+       ANIMATIONS
+    ========================= */
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes windowOpen {
+        from {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
 
     @media (max-width: 800px) {
-        .app-grid {
+        .apps {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
-    @media (max-width: 550px) {
-        .container {
-            width: 90%;
-            padding-top: 25px;
+    @media (max-width: 500px) {
+        .topbar {
+            padding: 13px 15px;
         }
 
-        .app-grid {
-            grid-template-columns: 1fr;
+        .system-name {
+            font-size: 12px;
         }
 
-        .app-card {
-            min-height: 135px;
+        .system-status {
+            font-size: 9px;
+        }
+
+        .welcome {
+            padding: 35px 15px 10px;
+        }
+
+        .apps {
+            padding: 20px 15px 40px;
+            gap: 10px;
+        }
+
+        .app {
+            min-height: 120px;
+            padding: 14px;
+        }
+
+        .app h3 {
+            font-size: 13px;
+        }
+
+        .app p {
+            font-size: 10px;
         }
 
         .window-content {
-            padding: 20px;
+            padding: 18px;
+            font-size: 12px;
         }
 
-        .game-area {
-            height: 320px;
-        }
-
-        .heart {
-            font-size: 23px;
+        .boot-container {
+            padding: 5px;
         }
     }
 </style>
@@ -534,464 +735,944 @@
 
 <body>
 
-<!-- BOOT SCREEN -->
+<!-- =========================
+     BOOT SCREEN
+========================= -->
 
 <div id="bootScreen">
+
     <div class="boot-container">
+
         <div class="boot-title">ELU.EXE</div>
-        <div class="boot-subtitle">PERSONAL MEMORY SYSTEM</div>
 
-        <div class="boot-log" id="bootLog"></div>
-
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <div class="boot-subtitle">
+            PERSONAL MEMORY SYSTEM
         </div>
 
-        <button class="enter-button" id="enterButton" onclick="enterSystem()" style="display:none;">
-            [ ENTER SYSTEM ]
+        <div id="bootText"></div>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <button id="enterButton">
+            ENTER ELU.EXE
         </button>
+
     </div>
+
 </div>
 
 
-<!-- MAIN APP -->
+<!-- =========================
+     MAIN SYSTEM
+========================= -->
 
-<div id="mainApp">
-    <div class="container">
+<div id="mainSystem">
 
-        <div class="top-bar">
-            <div class="system-name">ELU.EXE // PERSONAL SYSTEM</div>
-            <div class="system-status">STATUS: ONLINE</div>
+    <div class="topbar">
+
+        <div class="system-name">
+            ELU.EXE
         </div>
 
-        <div class="welcome">
-            <h1>Hello, sayang.</h1>
+        <div class="system-status">
+            SYSTEM STATUS:
+            <span>RUNNING</span>
+        </div>
+
+    </div>
+
+
+    <section class="welcome">
+
+        <h1>Hello, sayang.</h1>
+
+        <p>
+            You've entered something built entirely for you.
+            There isn't much useful software here. 
+            Just a little birthday project I made to celebrate you, filled with memories, little moments, things I love about you, and a few surprises along the way.
+            So take your time, explore everything, and most importantly...
+            Happy Birthday, sayang.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         APPLICATIONS
+    ========================== -->
+
+    <section class="apps">
+
+        <div class="app" onclick="openModal('memoriesModal')">
+
+            <div class="app-number">
+                APP 01
+            </div>
+
+            <h3>MEMORIES</h3>
 
             <p>
-                You've entered something built entirely for you.
-                There isn't much useful software here.
-                Just a little birthday project I made to celebrate you, filled with memories, little moments, things I love about you, and a few surprises along the way.
-                So take your time, explore everything, and most importantly...
-                Happy Birthday, sayang.
+                A collection of moments worth remembering.
             </p>
+
+        </div>
+
+
+        <div class="app" onclick="openModal('futureModal')">
+
+            <div class="app-number">
+                APP 02
+            </div>
+
+            <h3>FUTURE.EXE</h3>
+
+            <p>
+                Access possible future memories.
+            </p>
+
         </div>
 
 
-        <!-- APP GRID -->
+        <div class="app" onclick="openSecretLock()">
 
-        <div class="app-grid">
-
-            <div class="app-card" onclick="openModal('memoriesModal')">
-                <div>
-                    <div class="app-number">01 // FILE</div>
-                    <div class="app-title">MEMORIES</div>
-                    <div class="app-description">
-                        A collection of moments worth remembering.
-                    </div>
-                </div>
-                <div class="app-arrow">[ OPEN ]</div>
+            <div class="app-number">
+                APP 03
             </div>
 
+            <h3>SECRET FILE</h3>
 
-            <div class="app-card" onclick="openModal('futureModal')">
-                <div>
-                    <div class="app-number">02 // SYSTEM</div>
-                    <div class="app-title">FUTURE.EXE</div>
-                    <div class="app-description">
-                        Access possible future memories.
-                    </div>
-                </div>
-                <div class="app-arrow">[ OPEN ]</div>
-            </div>
-
-
-            <div class="app-card" onclick="openSecretLock()">
-                <div>
-                    <div class="app-number">03 // CLASSIFIED</div>
-                    <div class="app-title">SECRET FILE</div>
-                    <div class="app-description">
-                        Unauthorized access may reveal something important.
-                    </div>
-                </div>
-                <div class="app-arrow">[ LOCKED ]</div>
-            </div>
-
-
-            <div class="app-card" onclick="openLetterLock()">
-                <div>
-                    <div class="app-number">04 // MESSAGE</div>
-                    <div class="app-title">LOVE LETTER</div>
-                    <div class="app-description">
-                        A message that doesn't belong in a database.
-                    </div>
-                </div>
-                <div class="app-arrow">[ LOCKED ]</div>
-            </div>
-
-
-            <div class="app-card" onclick="openModal('birthdayModal')">
-                <div>
-                    <div class="app-number">05 // PROTOCOL</div>
-                    <div class="app-title">BIRTHDAY.EXE</div>
-                    <div class="app-description">
-                        A small game before accessing the final protocol.
-                    </div>
-                </div>
-                <div class="app-arrow">[ RUN ]</div>
-            </div>
-
-
-            <div class="app-card" onclick="openModal('loveModal')">
-                <div>
-                    <div class="app-number">06 // FINAL</div>
-                    <div class="app-title">LOVE.EXE</div>
-                    <div class="app-description">
-                        System termination utility.
-                    </div>
-                </div>
-                <div class="app-arrow">[ RUN ]</div>
-            </div>
+            <p>
+                Unauthorized access may reveal something important.
+            </p>
 
         </div>
+
+
+        <div class="app" onclick="openLetterLock()">
+
+            <div class="app-number">
+                APP 04
+            </div>
+
+            <h3>LOVE LETTER</h3>
+
+            <p>
+                A message that doesn't belong in a database.
+            </p>
+
+        </div>
+
+
+        <div class="app" onclick="openModal('birthdayModal')">
+
+            <div class="app-number">
+                APP 05
+            </div>
+
+            <h3>BIRTHDAY.EXE</h3>
+
+            <p>
+                A lil game before accessing the final protocol.
+            </p>
+
+        </div>
+
+
+        <div class="app" onclick="openModal('loveModal')">
+
+            <div class="app-number">
+                APP 06
+            </div>
+
+            <h3>LOVE.EXE</h3>
+
+            <p>
+                System termination utility.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer">
+        ELU.EXE // PERSONAL SYSTEM // VERSION 1.0
     </div>
+
 </div>
 
 
-<!-- MEMORIES MODAL -->
-
-<div class="modal" id="memoriesModal">
-    <div class="window">
-
-        <div class="window-header">
-            <div class="window-title">MEMORIES.EXE</div>
-            <button class="close" onclick="closeModal('memoriesModal')">×</button>
-        </div>
-
-        <div class="window-content">
-
-            <div class="content-section">
-                <h3>> MEMORY DATABASE</h3>
-
-                <div class="memory-item">
-                    <strong>01 // The Beginning</strong>
-                    <p>
-                        Some things start quietly, and somehow become some of the most important things in your life.
-                    </p>
-                </div>
-
-                <div class="memory-item">
-                    <strong>02 // The Little Things</strong>
-                    <p>
-                        The random conversations, stupid jokes, little moments, and everything in between.
-                    </p>
-                </div>
-
-                <div class="memory-item">
-                    <strong>03 // Us</strong>
-                    <p>
-                        Out of everything that could have happened, I'm really glad it happened with you.
-                    </p>
-                </div>
-
-            </div>
-
-            <p style="color: var(--muted);">
-                > More memories will continue to be added...
-            </p>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- FUTURE MODAL -->
-
-<div class="modal" id="futureModal">
-    <div class="window">
-
-        <div class="window-header">
-            <div class="window-title">FUTURE.EXE</div>
-            <button class="close" onclick="closeModal('futureModal')">×</button>
-        </div>
-
-        <div class="window-content">
-
-            <p style="margin-bottom:25px;">
-                > Predicting possible future memories...
-            </p>
-
-            <div class="future-item">
-                <strong>01 // More Adventures</strong>
-                <p>
-                    More places, more food, more random plans that somehow become good memories.
-                </p>
-            </div>
-
-            <div class="future-item">
-                <strong>02 // More Laughing</strong>
-                <p>
-                    Hopefully an unreasonable amount of it.
-                </p>
-            </div>
-
-            <div class="future-item">
-                <strong>03 // More Us</strong>
-                <p>
-                    More days together, more stories, and more things to look back on.
-                </p>
-            </div>
-
-            <p style="color:var(--green); margin-top:25px;">
-                > STATUS: FUTURE LOOKS GOOD.
-            </p>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- SECRET LOCK MODAL -->
+<!-- =========================
+     SECRET LOCK MODAL
+========================= -->
 
 <div class="modal" id="secretLockModal">
+
     <div class="window">
 
         <div class="window-header">
-            <div class="window-title">SECRET_FILE // ACCESS CONTROL</div>
-            <button class="close" onclick="closeModal('secretLockModal')">×</button>
+
+            <div class="window-title">
+                SECRET_FILE.LOCK
+            </div>
+
+            <button class="close" onclick="closeModal('secretLockModal')">
+                X
+            </button>
+
         </div>
 
         <div class="window-content lock-screen">
 
-            <div class="lock-line">
-                > CLASSIFIED FILE DETECTED.
-            </div>
+            <p class="lock-line">
+                &gt; ACCESSING SECRET FILE...
+            </p>
 
-            <div class="lock-line">
-                > AUTHORIZATION REQUIRED.
-            </div>
+            <p class="lock-line">
+                &gt; SECURITY PROTOCOL ACTIVE.
+            </p>
 
-            <div class="lock-question">
-                > What's 9 + 10?
-            </div>
+            <br>
+
+            <p class="lock-question">
+                &gt; SECURITY QUESTION:
+            </p>
+
+            <p>
+                What's 9 + 10?
+            </p>
+
+            <br>
 
             <input
-                class="lock-input"
-                id="secretAnswer"
                 type="text"
-                autocomplete="off"
+                id="secretAnswer"
+                class="lock-input"
                 placeholder="Enter answer..."
-                onkeydown="if(event.key === 'Enter') checkSecretAnswer()"
+                autocomplete="off"
             >
 
             <button class="lock-button" onclick="checkSecretAnswer()">
-                [ SUBMIT ]
+                [ UNLOCK FILE ]
             </button>
 
-            <div class="lock-feedback" id="secretFeedback"></div>
+            <div id="secretFeedback" class="lock-feedback"></div>
 
         </div>
+
     </div>
+
 </div>
 
 
-<!-- SECRET FILE -->
-
-<div class="modal" id="secretFileModal">
-    <div class="window">
-
-        <div class="window-header">
-            <div class="window-title">SECRET_FILE.TXT</div>
-            <button class="close" onclick="closeModal('secretFileModal')">×</button>
-        </div>
-
-        <div class="window-content">
-
-            <p style="color:var(--green); margin-bottom:20px;">
-                > ACCESS GRANTED.
-            </p>
-
-            <p>
-                You found the secret file.
-            </p>
-
-            <br>
-
-            <p>
-                I guess this means you're officially good at hacking.
-            </p>
-
-            <br>
-
-            <p style="color:var(--green);">
-                > FILE CONTENT:
-            </p>
-
-            <br>
-
-            <p>
-                You're one of the most special people in my life.
-            </p>
-
-            <br>
-
-            <p>
-                And I hope you know that.
-            </p>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- LOVE LETTER LOCK -->
+<!-- =========================
+     LOVE LETTER LOCK MODAL
+========================= -->
 
 <div class="modal" id="letterLockModal">
+
     <div class="window">
 
         <div class="window-header">
-            <div class="window-title">LOVE_LETTER // ACCESS CONTROL</div>
-            <button class="close" onclick="closeModal('letterLockModal')">×</button>
+
+            <div class="window-title">
+                LOVE_LETTER.LOCK
+            </div>
+
+            <button class="close" onclick="closeModal('letterLockModal')">
+                X
+            </button>
+
         </div>
 
         <div class="window-content lock-screen">
 
-            <div class="lock-line">
-                > PERSONAL MESSAGE DETECTED.
-            </div>
+            <p class="lock-line">
+                &gt; ACCESSING LOVE LETTER...
+            </p>
 
-            <div class="lock-line">
-                > AUTHORIZATION REQUIRED.
-            </div>
+            <p class="lock-line">
+                &gt; SECURITY PROTOCOL ACTIVE.
+            </p>
 
-            <div class="lock-question">
-                > You are my...?
-            </div>
+            <br>
+
+            <p class="lock-question">
+                &gt; SECURITY QUESTION:
+            </p>
+
+            <p>
+                You are my...?
+            </p>
+
+            <br>
 
             <input
-                class="lock-input"
-                id="letterAnswer"
                 type="text"
-                autocomplete="off"
+                id="letterAnswer"
+                class="lock-input"
                 placeholder="Enter answer..."
-                onkeydown="if(event.key === 'Enter') checkLetterAnswer()"
+                autocomplete="off"
             >
 
             <button class="lock-button" onclick="checkLetterAnswer()">
-                [ SUBMIT ]
+                [ UNLOCK FILE ]
             </button>
 
-            <div class="lock-feedback" id="letterFeedback"></div>
+            <div id="letterFeedback" class="lock-feedback"></div>
 
         </div>
+
     </div>
+
 </div>
 
 
-<!-- LOVE LETTER -->
+<!-- =========================
+     MEMORIES MODAL
+========================= -->
 
-<div class="modal" id="letterModal">
+<div class="modal" id="memoriesModal">
+
     <div class="window">
 
         <div class="window-header">
-            <div class="window-title">LOVE_LETTER.TXT</div>
-            <button class="close" onclick="closeModal('letterModal')">×</button>
+
+            <div class="window-title">
+                MEMORIES.DATABASE
+            </div>
+
+            <button class="close" onclick="closeModal('memoriesModal')">
+                X
+            </button>
+
         </div>
+
 
         <div class="window-content">
 
-            <div class="love-letter">
-                My sayang,
+            <div class="memory-list">
 
-                I don't really know how to put everything I feel into words, but I'll try.
 
-                Thank you for being someone who makes ordinary days feel special. Thank you for all the conversations, the laughs, the random moments, and even the little things you probably don't realize mean a lot to me.
+                <div class="memory-item">
 
-                I hope this birthday reminds you of how loved and appreciated you are.
+                    <h4>The Beginning</h4>
 
-                I hope this year brings you happiness, new memories, and everything you're working towards.
+                    <small>
+                        FILE 001
+                    </small>
 
-                And wherever life takes us, I hope there are still plenty of moments where I get to be there with you.
+                    <div class="memory-content">
 
-                Happy Birthday, sayang.
+                        We started as best friends and somehow
+                        five years later, we're still best friends
+                        just with something a little more between us.
 
-                <span class="love-final">I love you.</span>
+                        Those five years never really felt like a
+                        distance between us. If anything, they gave
+                        us more time to grow closer, understand each
+                        other and create something i never expected
+                        to have.
+
+                        I'm really grateful that somewhere along
+                        the way, my best friend became the person
+                        i get to love too.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>Our Conversations</h4>
+
+                    <small>
+                        FILE 002
+                    </small>
+
+                    <div class="memory-content">
+
+                        We used to think our conversations were cringe.
+
+                        Looking back now, i think we were right.
+
+                        WE ARE ACTUALLY CRINGE.
+
+                        And honestly, i wouldn't want to change that.
+
+                        I love how we can talk about the most random
+                        things, say things that make absolutely no
+                        sense and somehow still have the best
+                        conversations.
+
+                        Our conversations might not always make
+                        sense to anyone else but they make sense
+                        to us.
+
+                        And that matters more than you know.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Funny Moments</h4>
+
+                    <small>
+                        FILE 003
+                    </small>
+
+                    <div class="memory-content">
+
+                        There are so many funny moments between us
+                        that i don't think this database has enough
+                        storage.
+
+                        We asu each other a lot.
+                        We laugh a lot.
+                        We do stupid things a lot.
+
+                        Sometimes we are probably the only two
+                        people who find our jokes funny.
+
+                        But that's what makes them ours.
+
+                        I love all the chaos, all the stupid moments,
+                        all the laughing until we can't breathe
+                        and all the memories that came from simply
+                        being ourselves together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Little Things</h4>
+
+                    <small>
+                        FILE 004
+                    </small>
+
+                    <div class="memory-content">
+
+                        I love everything about you.
+
+                        But sometimes, it's not just the big things
+                        that stay with me.
+
+                        It's the little things you probably don't
+                        even realize you do.
+
+                        The way you talk, the way you handle
+                        things, the small habits you have, the little
+                        expressions you make, and all those tiny
+                        details that makes you, you.
+
+                        Those things might seem insignificant to you.
+
+                        But to me, they're part of the reason i fell
+                        in love with you.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>The Difficult Days</h4>
+
+                    <small>
+                        FILE 005
+                    </small>
+
+                    <div class="memory-content">
+
+                        Not every day is going to be perfect.
+
+                        There will be difficult days, frustrating
+                        days, days where things don't go the way
+                        we want them to.
+
+                        But I want you to know that even on those
+                        days, i will keep choosing you.
+
+                        I want to be someone who supports you when
+                        things get hard, someone who listens when
+                        you need to talk, and someone who will always
+                        cheer for you, even when you don't feel like
+                        cheering for yourself.
+
+                        I don't expect every day to be easy.
+
+                        I just hope that whatever days come next,
+                        we get to face them together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>My Favourite Memory</h4>
+
+                    <small>
+                        FILE 006
+                    </small>
+
+                    <div class="memory-content">
+
+                        If you ask me what my favorite memory of us
+                        is right now, honestly, i'd probably say all
+                        the time we've spent together.
+
+                        But if i really have to choose one, i'd say
+                        our trip to Ipoh.
+
+                        I never thought i'd be going to your hometown
+                        together with your family, eating amazing
+                        food, exploring around and just getting to
+                        experience that part of your life with you.
+
+                        It might have looked like just another trip
+                        but it meant a lot to me.
+
+                        Getting to spend that time with you, being
+                        around your family and creating those memories
+                        together is something i'll always remember.
+
+                        And honestly, i hope it's just one of many
+                        more trips we'll have together.
+
+                    </div>
+
+                </div>
+
+
+                <div class="memory-item">
+
+                    <h4>More To Come</h4>
+
+                    <small>
+                        FILE 007
+                    </small>
+
+                    <div class="memory-content">
+
+                        This file isn't finished.
+
+                        There are still so many places we haven't
+                        been, things we haven't done, birthdays we
+                        haven't celebrated, stupid jokes we haven't
+                        made, and memories we haven't created yet.
+
+                        So i'm leaving this database open.
+
+                        Because i want there to be a lot more to add.
+
+                        Stay tuned, poopy.
+
+                    </div>
+
+                </div>
+
+
             </div>
 
         </div>
+
     </div>
+
 </div>
 
 
-<!-- BIRTHDAY MODAL -->
+<!-- =========================
+     FUTURE MODAL
+========================= -->
 
-<div class="modal" id="birthdayModal">
+<div class="modal" id="futureModal">
+
     <div class="window">
 
         <div class="window-header">
-            <div class="window-title">BIRTHDAY.EXE</div>
-            <button class="close" onclick="closeBirthdayGame()">×</button>
+
+            <div class="window-title">
+                FUTURE.EXE
+            </div>
+
+            <button class="close" onclick="closeModal('futureModal')">
+                X
+            </button>
+
         </div>
 
+
+        <div class="window-content future-terminal">
+
+            <p class="terminal-line">
+                &gt; ACCESSING FUTURE DATABASE...
+            </p>
+
+            <p class="terminal-line">
+                &gt; Searching possible futures...
+            </p>
+
+            <br>
+
+            <p class="check">
+                [✓] More dates
+            </p>
+
+            <p class="check">
+                [✓] More adventures
+            </p>
+
+            <p class="check">
+                [✓] More birthdays
+            </p>
+
+            <p class="check">
+                [✓] More stupid 67 jokes
+            </p>
+
+            <p class="check">
+                [✓] More asu
+            </p>
+
+            <p class="check">
+                [✓] More memories
+            </p>
+
+            <br>
+
+            <p class="terminal-line">
+                Running probability calculation...
+            </p>
+
+            <p>
+                Future birthdays together:
+            </p>
+
+            <div class="infinity">
+                ∞
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SECRET MODAL
+========================= -->
+
+<div class="modal" id="secretModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                SECRET FILE
+            </div>
+
+            <button class="close" onclick="closeModal('secretModal')">
+                X
+            </button>
+
+        </div>
+
+
         <div class="window-content">
+
+            <div class="secret-box">
+
+                <h2>
+                    ACCESS GRANTED ✓
+                </h2>
+
+                <p>
+                    You found the secret file.
+                </p>
+
+                <br>
+
+                <p>
+                    There's no secret boo hoo.
+                </p>
+
+                <p>
+                    I just wanted an excuse to tell you...
+                </p>
+
+                <br>
+
+                <p style="color: var(--green);">
+                    You're one of the best things that ever happened to me.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     LOVE LETTER MODAL
+========================= -->
+
+<div class="modal" id="letterModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                LOVE LETTER.TXT
+            </div>
+
+            <button class="close" onclick="closeModal('letterModal')">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content">
+
+            <div class="letter">
+
+If you've made it this far, I guess the system has successfully revealed almost everything I wanted to say.
+
+But there are some things that probably don't belong in a database.
+
+I don't think I ever properly realised how much you would come to mean to me when we first became friends.
+
+You were just my best friend.
+
+Someone I could talk to, laugh with, annoy, make stupid jokes with, and spend hours doing absolutely nothing with.
+
+And somewhere along the way, you became so much more than that.
+
+You became someone I look forward to talking to.
+Someone whose happiness genuinely matters to me.
+Someone whose little habits I remember.
+Someone whose presence can make an ordinary day feel a little better.
+
+I love that we can be serious together and then immediately become the most unserious people alive.
+
+I love that we can laugh at the stupidest things.
+
+I love that we can be ourselves around each other.
+
+And I love that after all these years, you're still my best friend.
+
+That's probably one of the things I treasure most about us.
+
+I don't know exactly what the future is going to look like.
+
+I don't know where we'll be, what we'll be doing, or how many things will change along the way.
+
+But I know that I want to keep making memories with you.
+
+More trips.
+More birthdays.
+More random conversations.
+More stupid jokes.
+More asu.
+More moments that we'll look back on one day and laugh about.
+
+And when life gets difficult, I want to be there too.
+
+Not just for the good days, but for the days when everything feels a little heavier.
+
+I want to support you, believe in you, and remind you how capable you are whenever you forget.
+
+You don't have to be perfect around me.
+
+You don't have to have everything figured out.
+
+You can just be you.
+
+And somehow, that's always been more than enough for me.
+
+Thank you for being my best friend.
+Thank you for letting me be part of your life.
+And thank you for giving me so many memories that I know I'll carry with me for a very long time.
+
+Happy Birthday, sayang.
+
+I love you.
+
+                <div class="signature">
+                    — END OF MESSAGE —
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     BIRTHDAY GAME MODAL
+========================= -->
+
+<div class="modal" id="birthdayModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                BIRTHDAY.EXE
+            </div>
+
+            <button class="close" onclick="closeBirthdayGame()">
+                X
+            </button>
+
+        </div>
+
+
+        <div class="window-content">
+
+            <!-- GAME INTRO -->
 
             <div id="birthdayIntro">
 
                 <div class="birthday-intro">
-                    <p>> INITIALIZING BIRTHDAY.EXE...</p>
-                    <p>> SPECIAL PROTOCOL DETECTED.</p>
-                    <p>> LOADING BIRTHDAY MEMORY SYSTEM...</p>
-                    <br>
-                    <p>[✓] MEMORIES</p>
-                    <p>[✓] FUTURE.EXE</p>
-                    <p>[✓] LOVE.EXE</p>
-                    <br>
-                    <p style="color:var(--green);">
-                        > BIRTHDAY PROTOCOL READY.
+
+                    <p class="terminal-line">
+                        &gt; INITIALIZING BIRTHDAY.EXE...
                     </p>
+
+                    <p class="terminal-line">
+                        &gt; SPECIAL PROTOCOL DETECTED.
+                    </p>
+
+                    <p class="terminal-line">
+                        &gt; LOADING BIRTHDAY MEMORY SYSTEM...
+                    </p>
+
+                    <br>
+
+                    <p>
+                        [✓] MEMORIES
+                    </p>
+
+                    <p>
+                        [✓] FUTURE.EXE
+                    </p>
+
+                    <p>
+                        [✓] LOVE.EXE
+                    </p>
+
+                    <br>
+
+                    <p class="terminal-line">
+                        &gt; BIRTHDAY PROTOCOL READY.
+                    </p>
+
                 </div>
 
-                <button class="birthday-start" onclick="startBirthdayGame()">
+
+                <button
+                    class="birthday-start"
+                    onclick="startBirthdayGame()"
+                >
                     [ START BIRTHDAY.EXE ]
                 </button>
 
             </div>
 
 
-            <div class="game-container" id="birthdayGame">
+            <!-- GAME -->
+
+            <div
+                class="game-container"
+                id="birthdayGame"
+            >
 
                 <div class="game-status">
-                    <span>LOVE COLLECTED: <span id="score">0</span> / 10</span>
-                    <span>STATUS: <span id="gameStatus">RUNNING</span></span>
+
+                    <span>
+                        LOVE COLLECTED:
+                        <span id="score">0</span> / 10
+                    </span>
+
+                    <span>
+                        STATUS:
+                        <span id="gameStatus">
+                            RUNNING
+                        </span>
+                    </span>
+
                 </div>
 
-                <div class="game-area" id="gameArea"></div>
+
+                <div
+                    class="game-area"
+                    id="gameArea"
+                ></div>
+
 
                 <div class="game-message">
-                    > CATCH THE HEARTS. TAP OR CLICK TO COLLECT.
+                    &gt; CATCH THE HEARTS. TAP OR CLICK TO COLLECT.
                 </div>
 
             </div>
 
 
-            <div class="birthday-result" id="birthdayResult">
+            <!-- GAME RESULT -->
+
+            <div
+                class="birthday-result"
+                id="birthdayResult"
+            >
 
                 <p class="complete">
-                    > BIRTHDAY PROTOCOL COMPLETE.
+                    &gt; BIRTHDAY PROTOCOL COMPLETE.
                 </p>
 
                 <p>
-                    > LOVE COLLECTED: 10 / 10
+                    &gt; LOVE COLLECTED: 10 / 10
                 </p>
 
                 <br>
 
-                <p>[✓] MEMORIES LOADED</p>
-                <p>[✓] FUTURE LOADED</p>
-                <p>[✓] LOVE LOADED</p>
+                <p>
+                    [✓] MEMORIES LOADED
+                </p>
+
+                <p>
+                    [✓] FUTURE LOADED
+                </p>
+
+                <p>
+                    [✓] LOVE LOADED
+                </p>
 
                 <br>
 
-                <p style="color:var(--green);">
+                <p style="color: var(--green);">
                     HAPPY BIRTHDAY, ELU.
                 </p>
 
@@ -1009,65 +1690,125 @@
                     there's still an unlimited amount left.
                 </p>
 
-                <div class="big-love">∞</div>
 
-                <button class="play-again" onclick="startBirthdayGame()">
+                <div class="big-love">
+                    ∞
+                </div>
+
+
+                <button
+                    class="play-again"
+                    onclick="startBirthdayGame()"
+                >
                     [ PLAY AGAIN ]
                 </button>
 
             </div>
 
         </div>
+
     </div>
+
 </div>
 
 
-<!-- LOVE.EXE MODAL -->
+<!-- =========================
+     LOVE MODAL
+========================= -->
 
 <div class="modal" id="loveModal">
+
     <div class="window">
 
         <div class="window-header">
-            <div class="window-title">LOVE.EXE</div>
-            <button class="close" onclick="closeModal('loveModal')">×</button>
-        </div>
 
-        <div class="window-content">
-
-            <div class="termination">
-
-                <div class="termination-title">
-                    LOVE.EXE
-                </div>
-
-                <div class="termination-text">
-                    > SYSTEM TERMINATION REQUESTED.
-                    <br><br>
-                    > ERROR: LOVE CANNOT BE TERMINATED.
-                    <br><br>
-                    > ATTEMPTING FORCE SHUTDOWN...
-                    <br>
-                    > FAILED.
-                    <br><br>
-                    > LOVE.EXE WILL CONTINUE RUNNING.
-                    <br>
-                    > FOREVER.
-                </div>
-
-                <div class="infinity">
-                    ∞
-                </div>
-
+            <div class="window-title">
+                LOVE.EXE
             </div>
 
+            <button class="close" onclick="closeModal('loveModal')">
+                X
+            </button>
+
         </div>
+
+
+        <div class="window-content love-error">
+
+            <p>
+                &gt; Attempting to terminate Love.exe...
+            </p>
+
+            <br>
+
+            <p class="green">
+                Stopping memories...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p class="green">
+                Removing Elu...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p class="green">
+                Removing love...
+            </p>
+
+            <p>
+                FAILED.
+            </p>
+
+            <br>
+
+            <p>
+                CRITICAL ERROR
+            </p>
+
+            <br>
+
+            <p class="green">
+                Love.exe cannot be terminated.
+            </p>
+
+            <br>
+
+            <p>
+                Reason:
+            </p>
+
+            <p class="green">
+                We are one noww.
+            </p>
+
+            <br>
+
+            <p>
+                &gt;&gt;&gt; Program will continue indefinitely.
+            </p>
+
+        </div>
+
     </div>
+
 </div>
 
 
 <script>
 
-    /* BOOT SYSTEM */
+    /* =========================
+       BOOT SEQUENCE
+    ========================= */
 
     const bootMessages = [
         "> Initializing ELU.EXE...",
@@ -1076,74 +1817,95 @@
         "> Loading important files...",
         "> Checking love.exe...",
         "> System integrity: PERFECT",
-        "> Personalization detected."
+        "> Personalization detected.",
     ];
 
-    let bootIndex = 0;
-    const bootLog = document.getElementById("bootLog");
-    const progressFill = document.getElementById("progressFill");
+    const bootText = document.getElementById("bootText");
+    const progressBar = document.getElementById("progressBar");
     const enterButton = document.getElementById("enterButton");
+
+    let bootIndex = 0;
 
     function bootSequence() {
 
         if (bootIndex < bootMessages.length) {
 
             const line = document.createElement("div");
+
+            line.className = "boot-line";
+
             line.textContent = bootMessages[bootIndex];
-            bootLog.appendChild(line);
+
+            bootText.appendChild(line);
 
             bootIndex++;
 
-            progressFill.style.width =
+            progressBar.style.width =
                 ((bootIndex / bootMessages.length) * 100) + "%";
 
-            setTimeout(bootSequence, 500);
+            setTimeout(bootSequence, 450);
 
         } else {
 
-            enterButton.style.display = "inline-block";
+            setTimeout(() => {
+
+                enterButton.style.display = "block";
+
+            }, 500);
 
         }
+
     }
 
     bootSequence();
 
 
-    function enterSystem() {
+    enterButton.addEventListener("click", () => {
 
         document.getElementById("bootScreen").style.display = "none";
-        document.getElementById("mainApp").style.display = "block";
 
-    }
+        document.getElementById("mainSystem").style.display = "block";
 
+        window.scrollTo(0, 0);
 
-    /* MODALS */
-
-    function openModal(id) {
-
-        document.getElementById(id).style.display = "flex";
-
-    }
+    });
 
 
-    function closeModal(id) {
-
-        document.getElementById(id).style.display = "none";
-
-    }
-
-
-    /* SECRET FILE LOCK */
+    /* =========================
+       LOCKED FILES
+    ========================= */
 
     function openSecretLock() {
 
         document.getElementById("secretAnswer").value = "";
+
         document.getElementById("secretFeedback").textContent = "";
+
+        document.getElementById("secretFeedback").className =
+            "lock-feedback";
 
         openModal("secretLockModal");
 
         setTimeout(() => {
             document.getElementById("secretAnswer").focus();
+        }, 100);
+
+    }
+
+
+    function openLetterLock() {
+
+        document.getElementById("letterAnswer").value = "";
+
+        document.getElementById("letterFeedback").textContent = "";
+
+        document.getElementById("letterFeedback").className =
+            "lock-feedback";
+
+        openModal("letterLockModal");
+
+        setTimeout(() => {
+            document.getElementById("letterAnswer").focus();
         }, 100);
 
     }
@@ -1157,42 +1919,30 @@
         const feedback =
             document.getElementById("secretFeedback");
 
+
         if (answer === "67") {
 
-            feedback.textContent = "[✓] ACCESS GRANTED.";
             feedback.className = "lock-feedback success";
+
+            feedback.textContent =
+                "[✓] ACCESS GRANTED. Opening secret file...";
 
             setTimeout(() => {
 
                 closeModal("secretLockModal");
-                openModal("secretFileModal");
 
-            }, 500);
+                openModal("secretModal");
+
+            }, 700);
 
         } else {
+
+            feedback.className = "lock-feedback";
 
             feedback.textContent =
                 "[X] ACCESS DENIED. Incorrect answer.";
 
-            feedback.className = "lock-feedback";
-
         }
-
-    }
-
-
-    /* LOVE LETTER LOCK */
-
-    function openLetterLock() {
-
-        document.getElementById("letterAnswer").value = "";
-        document.getElementById("letterFeedback").textContent = "";
-
-        openModal("letterLockModal");
-
-        setTimeout(() => {
-            document.getElementById("letterAnswer").focus();
-        }, 100);
 
     }
 
@@ -1200,280 +1950,84 @@
     function checkLetterAnswer() {
 
         const answer =
-            document.getElementById("letterAnswer").value.trim().toLowerCase();
+            document.getElementById("letterAnswer").value
+                .trim()
+                .toLowerCase();
 
         const feedback =
             document.getElementById("letterFeedback");
 
+
         if (answer === "honey bunny") {
 
-            feedback.textContent = "[✓] ACCESS GRANTED.";
             feedback.className = "lock-feedback success";
+
+            feedback.textContent =
+                "[✓] ACCESS GRANTED. Opening love letter...";
 
             setTimeout(() => {
 
                 closeModal("letterLockModal");
+
                 openModal("letterModal");
 
-            }, 500);
+            }, 700);
 
         } else {
 
-            feedback.textContent = "BRUHH ITS KIRK";
             feedback.className = "lock-feedback";
 
-        }
-
-    }
-
-
-    /* BIRTHDAY GAME */
-
-    let gameRunning = false;
-    let score = 0;
-    let animationFrame = null;
-    let heartTimer = null;
-    let hearts = [];
-
-
-    function startBirthdayGame() {
-
-        const intro = document.getElementById("birthdayIntro");
-        const game = document.getElementById("birthdayGame");
-        const result = document.getElementById("birthdayResult");
-
-        intro.style.display = "none";
-        result.style.display = "none";
-        game.style.display = "block";
-
-        score = 0;
-        gameRunning = true;
-        hearts = [];
-
-        document.getElementById("score").textContent = "0";
-        document.getElementById("gameStatus").textContent = "RUNNING";
-
-        const gameArea = document.getElementById("gameArea");
-        gameArea.innerHTML = "";
-
-        if (animationFrame) {
-            cancelAnimationFrame(animationFrame);
-        }
-
-        if (heartTimer) {
-            clearInterval(heartTimer);
-        }
-
-        spawnHeart();
-
-        heartTimer = setInterval(() => {
-
-            if (gameRunning) {
-                spawnHeart();
-            }
-
-        }, 900);
-
-        animationFrame = requestAnimationFrame(updateHearts);
-
-    }
-
-
-    function spawnHeart() {
-
-        if (!gameRunning) return;
-
-        const gameArea = document.getElementById("gameArea");
-
-        const heart = document.createElement("div");
-
-        heart.className = "heart";
-        heart.textContent = "♥";
-
-        const areaWidth = gameArea.clientWidth;
-        const heartSize = 30;
-
-        const x =
-            Math.random() *
-            Math.max(1, areaWidth - heartSize);
-
-        heart.style.left = x + "px";
-        heart.style.top = "-35px";
-
-        gameArea.appendChild(heart);
-
-        const heartObject = {
-            element: heart,
-            x: x,
-            y: -35,
-            speed: 1.2 + Math.random() * 1.5,
-            collected: false
-        };
-
-        hearts.push(heartObject);
-
-        heart.addEventListener("pointerdown", function(event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            collectHeart(heartObject);
-
-        });
-
-    }
-
-
-    function collectHeart(heartObject) {
-
-        if (
-            !gameRunning ||
-            heartObject.collected
-        ) {
-            return;
-        }
-
-        heartObject.collected = true;
-
-        score++;
-
-        document.getElementById("score").textContent = score;
-
-        heartObject.element.remove();
-
-        if (score >= 10) {
-
-            finishBirthdayGame();
+            feedback.textContent =
+                "BRUHH ITS KIRK";
 
         }
 
     }
 
 
-    function updateHearts() {
+    document.getElementById("secretAnswer").addEventListener("keydown", function(event) {
 
-        if (!gameRunning) {
-            return;
+        if (event.key === "Enter") {
+
+            checkSecretAnswer();
+
         }
 
-        const gameArea = document.getElementById("gameArea");
-        const areaHeight = gameArea.clientHeight;
-
-        hearts.forEach((heartObject) => {
-
-            if (
-                heartObject.collected ||
-                !heartObject.element.isConnected
-            ) {
-                return;
-            }
-
-            heartObject.y += heartObject.speed;
-
-            heartObject.element.style.top =
-                heartObject.y + "px";
-
-        });
+    });
 
 
-        hearts = hearts.filter((heartObject) => {
+    document.getElementById("letterAnswer").addEventListener("keydown", function(event) {
 
-            if (
-                heartObject.collected ||
-                !heartObject.element.isConnected
-            ) {
-                return false;
-            }
+        if (event.key === "Enter") {
 
-            if (heartObject.y > areaHeight + 40) {
+            checkLetterAnswer();
 
-                heartObject.element.remove();
+        }
 
-                return false;
-            }
-
-            return true;
-
-        });
+    });
 
 
-        animationFrame =
-            requestAnimationFrame(updateHearts);
+    /* =========================
+       MODALS
+    ========================= */
+
+    function openModal(id) {
+
+        document.getElementById(id).classList.add("active");
+
+        document.body.style.overflow = "hidden";
 
     }
 
 
-    function finishBirthdayGame() {
+    function closeModal(id) {
 
-        gameRunning = false;
+        document.getElementById(id).classList.remove("active");
 
-        document.getElementById("gameStatus").textContent =
-            "COMPLETE";
-
-        if (heartTimer) {
-            clearInterval(heartTimer);
-            heartTimer = null;
-        }
-
-        if (animationFrame) {
-            cancelAnimationFrame(animationFrame);
-            animationFrame = null;
-        }
-
-        hearts.forEach((heartObject) => {
-
-            if (heartObject.element) {
-                heartObject.element.remove();
-            }
-
-        });
-
-        hearts = [];
-
-        setTimeout(() => {
-
-            document.getElementById("birthdayGame").style.display =
-                "none";
-
-            document.getElementById("birthdayResult").style.display =
-                "block";
-
-        }, 400);
+        document.body.style.overflow = "";
 
     }
 
-
-    function closeBirthdayGame() {
-
-        gameRunning = false;
-
-        if (heartTimer) {
-            clearInterval(heartTimer);
-            heartTimer = null;
-        }
-
-        if (animationFrame) {
-            cancelAnimationFrame(animationFrame);
-            animationFrame = null;
-        }
-
-        hearts.forEach((heartObject) => {
-
-            if (heartObject.element) {
-                heartObject.element.remove();
-            }
-
-        });
-
-        hearts = [];
-
-        document.getElementById("birthdayModal").style.display =
-            "none";
-
-    }
-
-
-    /* CLOSE MODAL WHEN CLICKING OUTSIDE */
 
     document.querySelectorAll(".modal").forEach(modal => {
 
@@ -1481,11 +2035,9 @@
 
             if (event.target === modal) {
 
-                if (modal.id === "birthdayModal") {
-                    closeBirthdayGame();
-                } else {
-                    modal.style.display = "none";
-                }
+                modal.classList.remove("active");
+
+                document.body.style.overflow = "";
 
             }
 
@@ -1493,8 +2045,398 @@
 
     });
 
+
+    document.addEventListener("keydown", function(event) {
+
+        if (event.key === "Escape") {
+
+            document.querySelectorAll(".modal").forEach(modal => {
+
+                modal.classList.remove("active");
+
+            });
+
+            document.body.style.overflow = "";
+
+        }
+
+    });
+
+
+    /* =========================
+       MEMORY DATABASE
+    ========================= */
+
+    document.querySelectorAll(".memory-item").forEach(item => {
+
+        item.addEventListener("click", () => {
+
+            item.classList.toggle("open");
+
+        });
+
+    });
+
+
+/* =========================
+   BIRTHDAY GAME
+========================= */
+
+let gameRunning = false;
+let score = 0;
+let animationFrame = null;
+let heartTimer = null;
+let hearts = [];
+
+
+function startBirthdayGame() {
+
+    const intro =
+        document.getElementById("birthdayIntro");
+
+    const game =
+        document.getElementById("birthdayGame");
+
+    const result =
+        document.getElementById("birthdayResult");
+
+
+    intro.style.display = "none";
+    result.style.display = "none";
+    game.style.display = "block";
+
+
+    score = 0;
+    gameRunning = true;
+    hearts = [];
+
+
+    document.getElementById("score").textContent = "0";
+
+    document.getElementById("gameStatus").textContent =
+        "RUNNING";
+
+
+    const gameArea =
+        document.getElementById("gameArea");
+
+    gameArea.innerHTML = "";
+
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(animationFrame);
+
+    }
+
+
+    if (heartTimer) {
+
+        clearInterval(heartTimer);
+
+    }
+
+
+    spawnHeart();
+
+
+    heartTimer = setInterval(() => {
+
+        if (gameRunning) {
+
+            spawnHeart();
+
+        }
+
+    }, 900);
+
+
+    animationFrame =
+        requestAnimationFrame(updateHearts);
+
+}
+
+
+function spawnHeart() {
+
+    if (!gameRunning) {
+        return;
+    }
+
+
+    const gameArea =
+        document.getElementById("gameArea");
+
+
+    const heart =
+        document.createElement("div");
+
+
+    heart.className = "heart";
+
+    heart.textContent = "♥";
+
+
+    const areaWidth =
+        gameArea.clientWidth;
+
+
+    const heartSize = 30;
+
+
+    const x =
+        Math.random() *
+        Math.max(1, areaWidth - heartSize);
+
+
+    heart.style.left = x + "px";
+
+    heart.style.top = "-35px";
+
+
+    gameArea.appendChild(heart);
+
+
+    const heartObject = {
+
+        element: heart,
+
+        x: x,
+
+        y: -35,
+
+        speed:
+            1.2 + Math.random() * 1.5,
+
+        collected: false
+
+    };
+
+
+    hearts.push(heartObject);
+
+
+    heart.addEventListener(
+        "pointerdown",
+        function(event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            collectHeart(heartObject);
+
+        }
+    );
+
+}
+
+
+function collectHeart(heartObject) {
+
+    if (
+        !gameRunning ||
+        heartObject.collected
+    ) {
+
+        return;
+
+    }
+
+
+    heartObject.collected = true;
+
+
+    score++;
+
+
+    document.getElementById("score").textContent =
+        score;
+
+
+    heartObject.element.remove();
+
+
+    if (score >= 10) {
+
+        finishBirthdayGame();
+
+    }
+
+}
+
+
+function updateHearts() {
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+
+    const gameArea =
+        document.getElementById("gameArea");
+
+
+    const areaHeight =
+        gameArea.clientHeight;
+
+
+    hearts.forEach((heartObject) => {
+
+        if (
+            heartObject.collected ||
+            !heartObject.element.isConnected
+        ) {
+
+            return;
+
+        }
+
+
+        heartObject.y +=
+            heartObject.speed;
+
+
+        heartObject.element.style.top =
+            heartObject.y + "px";
+
+    });
+
+
+    hearts = hearts.filter((heartObject) => {
+
+        if (
+            heartObject.collected ||
+            !heartObject.element.isConnected
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            heartObject.y >
+            areaHeight + 40
+        ) {
+
+            heartObject.element.remove();
+
+            return false;
+
+        }
+
+
+        return true;
+
+    });
+
+
+    animationFrame =
+        requestAnimationFrame(updateHearts);
+
+}
+
+
+function finishBirthdayGame() {
+
+    gameRunning = false;
+
+
+    document.getElementById("gameStatus").textContent =
+        "COMPLETE";
+
+
+    if (heartTimer) {
+
+        clearInterval(heartTimer);
+
+        heartTimer = null;
+
+    }
+
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(animationFrame);
+
+        animationFrame = null;
+
+    }
+
+
+    hearts.forEach((heartObject) => {
+
+        if (heartObject.element) {
+
+            heartObject.element.remove();
+
+        }
+
+    });
+
+
+    hearts = [];
+
+
+    setTimeout(() => {
+
+        document.getElementById("birthdayGame")
+            .style.display = "none";
+
+
+        document.getElementById("birthdayResult")
+            .style.display = "block";
+
+    }, 400);
+
+}
+
+
+function closeBirthdayGame() {
+
+    gameRunning = false;
+
+
+    if (heartTimer) {
+
+        clearInterval(heartTimer);
+
+        heartTimer = null;
+
+    }
+
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(animationFrame);
+
+        animationFrame = null;
+
+    }
+
+
+    hearts.forEach((heartObject) => {
+
+        if (heartObject.element) {
+
+            heartObject.element.remove();
+
+        }
+
+    });
+
+
+    hearts = [];
+
+
+    closeModal("birthdayModal");
+
+}
+
 </script>
 
 </body>
 </html>
-```
