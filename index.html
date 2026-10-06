@@ -664,14 +664,14 @@
 
     <section class="welcome">
 
-        <h1>Welcome back, sayang.</h1>
+        <h1>Hello, sayang.</h1>
 
         <p>
             You've entered something built entirely for you.
-            There isn't much useful software here.
-            Just a collection of memories, little moments,
-            things I love about you, and a future I hope we
-            get to keep writing together.
+            There isn't much useful software here. 
+            Just a little birthday project I made to celebrate you, filled with memories, little moments, things I love about you, and a few surprises along the way.
+            So take your time, explore everything, and most importantly...
+            Happy Birthday, sayang.
         </p>
 
     </section>
@@ -713,7 +713,7 @@
         </div>
 
 
-        <div class="app" onclick="openModal('secretModal')">
+        <div class="app" onclick="unlockSecret()">
 
             <div class="app-number">
                 APP 03
@@ -728,7 +728,7 @@
         </div>
 
 
-        <div class="app" onclick="openModal('letterModal')">
+        <div class="app" onclick="unlockLoveLetter()">
 
             <div class="app-number">
                 APP 04
@@ -818,19 +818,19 @@
 
                     <div class="memory-content">
 
-                        We started as best friends, and somehow,
-                        five years later, we're still best friends,
+                        We started as best friends and somehow
+                        five years later, we're still best friends
                         just with something a little more between us.
 
                         Those five years never really felt like a
                         distance between us. If anything, they gave
                         us more time to grow closer, understand each
-                        other, and create something I never expected
+                        other and create something i never expected
                         to have.
 
                         I'm really grateful that somewhere along
                         the way, my best friend became the person
-                        I get to love too.
+                        i get to love too.
 
                     </div>
 
@@ -849,22 +849,22 @@
 
                         We used to think our conversations were cringe.
 
-                        Looking back now, I think we were right.
+                        Looking back now, i think we were right.
 
                         WE ARE ACTUALLY CRINGE.
 
-                        And honestly, I wouldn't change it.
+                        And honestly, i wouldn't want to change that.
 
                         I love how we can talk about the most random
                         things, say things that make absolutely no
-                        sense, and somehow still have the best
+                        sense and somehow still have the best
                         conversations.
 
                         Our conversations might not always make
-                        sense to anyone else, but they make sense
+                        sense to anyone else but they make sense
                         to us.
 
-                        And I love that.
+                        And that matters more than you know.
 
                     </div>
 
@@ -882,10 +882,10 @@
                     <div class="memory-content">
 
                         There are so many funny moments between us
-                        that I don't think this database has enough
+                        that i don't think this database has enough
                         storage.
 
-                        We tease each other a lot.
+                        We asu each other a lot.
                         We laugh a lot.
                         We do stupid things a lot.
 
@@ -895,7 +895,7 @@
                         But that's what makes them ours.
 
                         I love all the chaos, all the stupid moments,
-                        all the laughing until we can't breathe,
+                        all the laughing until we can't breathe
                         and all the memories that came from simply
                         being ourselves together.
 
@@ -916,25 +916,21 @@
 
                         I love everything about you.
 
-                        But sometimes, it's not the big things
+                        But sometimes, it's not just the big things
                         that stay with me.
 
                         It's the little things you probably don't
-                        even realise you do.
+                        even realize you do.
 
-                        The way you talk, the way you react to
+                        The way you talk, the way you handle
                         things, the small habits you have, the little
                         expressions you make, and all those tiny
-                        details that make you, you.
+                        details that makes you, you.
 
                         Those things might seem insignificant to you.
 
-                        But to me, they're part of the reason I fell
+                        But to me, they're part of the reason i fell
                         in love with you.
-
-                        I don't just love the big parts of who you are.
-
-                        I love the little parts too.
 
                     </div>
 
@@ -958,7 +954,7 @@
                         we want them to.
 
                         But I want you to know that even on those
-                        days, I will keep choosing you.
+                        days, i will keep choosing you.
 
                         I want to be someone who supports you when
                         things get hard, someone who listens when
@@ -986,26 +982,26 @@
 
                     <div class="memory-content">
 
-                        If you ask me what my favourite memory of us
-                        is right now, honestly, I'd probably say all
+                        If you ask me what my favorite memory of us
+                        is right now, honestly, i'd probably say all
                         the time we've spent together.
 
-                        But if I really have to choose one, I'd say
+                        But if i really have to choose one, i'd say
                         our trip to Ipoh.
 
-                        I never thought I'd be going to your hometown
+                        I never thought i'd be going to your hometown
                         together with your family, eating amazing
-                        food, exploring around, and just getting to
+                        food, exploring around and just getting to
                         experience that part of your life with you.
 
-                        It might have looked like just another trip,
+                        It might have looked like just another trip
                         but it meant a lot to me.
 
                         Getting to spend that time with you, being
-                        around your family, and creating those memories
-                        together is something I'll always remember.
+                        around your family and creating those memories
+                        together is something i'll always remember.
 
-                        And honestly, I hope it's just one of many
+                        And honestly, i hope it's just one of many
                         more trips we'll have together.
 
                     </div>
@@ -1030,11 +1026,11 @@
                         haven't celebrated, stupid jokes we haven't
                         made, and memories we haven't created yet.
 
-                        So I'm leaving this database open.
+                        So i'm leaving this database open.
 
-                        Because I want there to be a lot more to add.
+                        Because i want there to be a lot more to add.
 
-                        Stay tuned.
+                        Stay tuned, poopy.
 
                     </div>
 
@@ -1440,7 +1436,6 @@ I love you.
         "> Checking love.exe...",
         "> System integrity: PERFECT",
         "> Personalization detected.",
-        "> Welcome back, sayang."
     ];
 
     const bootText = document.getElementById("bootText");
@@ -1492,6 +1487,52 @@ I love you.
         window.scrollTo(0, 0);
 
     });
+
+
+    /* =========================
+       LOCKED FILES
+    ========================= */
+
+    function unlockSecret() {
+
+        const answer = prompt("LOCKED FILE\n\nWhat's 9 + 10?");
+
+        if (answer === null) {
+            return;
+        }
+
+        if (answer.trim() === "67") {
+
+            openModal("secretModal");
+
+        } else {
+
+            alert("ACCESS DENIED.\n\nWrong answer.");
+
+        }
+
+    }
+
+
+    function unlockLoveLetter() {
+
+        const answer = prompt("LOCKED FILE\n\nYou are my...?");
+
+        if (answer === null) {
+            return;
+        }
+
+        if (answer.trim().toLowerCase() === "honey bunny") {
+
+            openModal("letterModal");
+
+        } else {
+
+            alert("BRUHH ITS KIRK");
+
+        }
+
+    }
 
 
     /* =========================
