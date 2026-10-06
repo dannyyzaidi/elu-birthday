@@ -345,6 +345,67 @@
     }
 
     /* =========================
+       LOCKED FILES
+    ========================= */
+
+    .lock-screen {
+        line-height: 2;
+    }
+
+    .lock-line {
+        color: var(--green);
+        margin-bottom: 8px;
+    }
+
+    .lock-question {
+        color: var(--text);
+        margin: 20px 0 12px;
+    }
+
+    .lock-input {
+        width: 100%;
+        background: #020402;
+        border: 1px solid var(--border);
+        color: var(--green);
+        padding: 13px;
+        outline: none;
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .lock-input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 12px rgba(57, 255, 136, 0.12);
+    }
+
+    .lock-button {
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--green);
+        color: var(--green);
+        padding: 13px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: 0.2s;
+    }
+
+    .lock-button:hover,
+    .lock-button:active {
+        background: var(--green);
+        color: #020402;
+    }
+
+    .lock-feedback {
+        min-height: 25px;
+        margin-top: 15px;
+        color: var(--danger);
+    }
+
+    .lock-feedback.success {
+        color: var(--green);
+    }
+
+    /* =========================
        MEMORIES
     ========================= */
 
@@ -713,7 +774,7 @@
         </div>
 
 
-        <div class="app" onclick="unlockSecret()">
+        <div class="app" onclick="openSecretLock()">
 
             <div class="app-number">
                 APP 03
@@ -728,7 +789,7 @@
         </div>
 
 
-        <div class="app" onclick="unlockLoveLetter()">
+        <div class="app" onclick="openLetterLock()">
 
             <div class="app-number">
                 APP 04
@@ -777,6 +838,132 @@
 
     <div class="footer">
         ELU.EXE // PERSONAL SYSTEM // VERSION 1.0
+    </div>
+
+</div>
+
+
+<!-- =========================
+     SECRET LOCK MODAL
+========================= -->
+
+<div class="modal" id="secretLockModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                SECRET_FILE.LOCK
+            </div>
+
+            <button class="close" onclick="closeModal('secretLockModal')">
+                X
+            </button>
+
+        </div>
+
+        <div class="window-content lock-screen">
+
+            <p class="lock-line">
+                &gt; ACCESSING SECRET FILE...
+            </p>
+
+            <p class="lock-line">
+                &gt; SECURITY PROTOCOL ACTIVE.
+            </p>
+
+            <br>
+
+            <p class="lock-question">
+                &gt; SECURITY QUESTION:
+            </p>
+
+            <p>
+                What's 9 + 10?
+            </p>
+
+            <br>
+
+            <input
+                type="text"
+                id="secretAnswer"
+                class="lock-input"
+                placeholder="Enter answer..."
+                autocomplete="off"
+            >
+
+            <button class="lock-button" onclick="checkSecretAnswer()">
+                [ UNLOCK FILE ]
+            </button>
+
+            <div id="secretFeedback" class="lock-feedback"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     LOVE LETTER LOCK MODAL
+========================= -->
+
+<div class="modal" id="letterLockModal">
+
+    <div class="window">
+
+        <div class="window-header">
+
+            <div class="window-title">
+                LOVE_LETTER.LOCK
+            </div>
+
+            <button class="close" onclick="closeModal('letterLockModal')">
+                X
+            </button>
+
+        </div>
+
+        <div class="window-content lock-screen">
+
+            <p class="lock-line">
+                &gt; ACCESSING LOVE LETTER...
+            </p>
+
+            <p class="lock-line">
+                &gt; SECURITY PROTOCOL ACTIVE.
+            </p>
+
+            <br>
+
+            <p class="lock-question">
+                &gt; SECURITY QUESTION:
+            </p>
+
+            <p>
+                You are my...?
+            </p>
+
+            <br>
+
+            <input
+                type="text"
+                id="letterAnswer"
+                class="lock-input"
+                placeholder="Enter answer..."
+                autocomplete="off"
+            >
+
+            <button class="lock-button" onclick="checkLetterAnswer()">
+                [ UNLOCK FILE ]
+            </button>
+
+            <div id="letterFeedback" class="lock-feedback"></div>
+
+        </div>
+
     </div>
 
 </div>
@@ -1493,46 +1680,136 @@ I love you.
        LOCKED FILES
     ========================= */
 
-    function unlockSecret() {
+    function openSecretLock() {
 
-        const answer = prompt("LOCKED FILE\n\nWhat's 9 + 10?");
+        document.getElementById("secretAnswer").value = "";
 
-        if (answer === null) {
-            return;
-        }
+        document.getElementById("secretFeedback").textContent = "";
 
-        if (answer.trim() === "67") {
+        document.getElementById("secretFeedback").className =
+            "lock-feedback";
 
-            openModal("secretModal");
+        openModal("secretLockModal");
+
+        setTimeout(() => {
+            document.getElementById("secretAnswer").focus();
+        }, 100);
+
+    }
+
+
+    function openLetterLock() {
+
+        document.getElementById("letterAnswer").value = "";
+
+        document.getElementById("letterFeedback").textContent = "";
+
+        document.getElementById("letterFeedback").className =
+            "lock-feedback";
+
+        openModal("letterLockModal");
+
+        setTimeout(() => {
+            document.getElementById("letterAnswer").focus();
+        }, 100);
+
+    }
+
+
+    function checkSecretAnswer() {
+
+        const answer =
+            document.getElementById("secretAnswer").value.trim();
+
+        const feedback =
+            document.getElementById("secretFeedback");
+
+
+        if (answer === "67") {
+
+            feedback.className = "lock-feedback success";
+
+            feedback.textContent =
+                "[✓] ACCESS GRANTED. Opening secret file...";
+
+            setTimeout(() => {
+
+                closeModal("secretLockModal");
+
+                openModal("secretModal");
+
+            }, 700);
 
         } else {
 
-            alert("ACCESS DENIED.\n\nWrong answer.");
+            feedback.className = "lock-feedback";
+
+            feedback.textContent =
+                "[X] ACCESS DENIED. Incorrect answer.";
 
         }
 
     }
 
 
-    function unlockLoveLetter() {
+    function checkLetterAnswer() {
 
-        const answer = prompt("LOCKED FILE\n\nYou are my...?");
+        const answer =
+            document.getElementById("letterAnswer").value
+                .trim()
+                .toLowerCase();
 
-        if (answer === null) {
-            return;
-        }
+        const feedback =
+            document.getElementById("letterFeedback");
 
-        if (answer.trim().toLowerCase() === "honey bunny") {
 
-            openModal("letterModal");
+        if (answer === "honey bunny") {
+
+            feedback.className = "lock-feedback success";
+
+            feedback.textContent =
+                "[✓] ACCESS GRANTED. Opening love letter...";
+
+            setTimeout(() => {
+
+                closeModal("letterLockModal");
+
+                openModal("letterModal");
+
+            }, 700);
 
         } else {
 
-            alert("BRUHH ITS KIRK");
+            feedback.className = "lock-feedback";
+
+            feedback.textContent =
+                "BRUHH ITS KIRK";
 
         }
 
     }
+
+
+    document.getElementById("secretAnswer").addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            checkSecretAnswer();
+
+        }
+
+    });
+
+
+    document.getElementById("letterAnswer").addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            checkLetterAnswer();
+
+        }
+
+    });
 
 
     /* =========================
